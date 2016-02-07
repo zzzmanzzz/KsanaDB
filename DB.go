@@ -3,6 +3,7 @@ import (
     sjson "github.com/bitly/go-simplejson"
     "fmt"
     "log"
+    "encoding/json"
 )
 
 func Connect() {
@@ -18,7 +19,7 @@ func SetData(data string) {
 
     InputArray,_ := js.Array()    
     for _, data := range InputArray {
-        hashdata, _  := data.(map[string]interface{})
+        hashdata  := data.(map[string]interface{})
         name := hashdata["name"]
         dataPoints := hashdata["datapoints"]
 
@@ -27,21 +28,38 @@ func SetData(data string) {
         }
 
         if dataPoints == nil {
-            value := hashdata["value"]
-            timestamp := hashdata["timestamp"]
-            TODO: add a function to bulk insert                
+            value, _ := (hashdata["value"].(json.Number)).Float64()
+
+            if hashdata["timestamp"] == nil {
+                //log.Fatalf("Connect failed: %s\n", err.Error()) 
+                continue    
+            }
+            timestamp, err := (hashdata["timestamp"].(json.Number)).Int64()
+            
+            if err != nil {
+                //log.Fatalf("Connect failed: %s\n", err.Error()) 
+                continue    
+            }
+
+            //TODO: add a function to insert                
             fmt.Println(name)
             fmt.Println(value)
-            fmt.Println(timestamp)
+
+            getDateStartSec(timestamp)
         } else {
             
-            TODO: add a function to insert                
+            //TODO: add a function to bulk insert                
+
             fmt.Println(name)
             fmt.Println(dataPoints)
         }
 
 
     }
+}
+
+func getDateStartSec(timestamp int64) {
+     fmt.Println(timestamp)
 }
 
 //func AddDataPoint(timestamp unit32, data []string
