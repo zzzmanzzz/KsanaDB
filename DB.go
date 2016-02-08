@@ -4,6 +4,7 @@ import (
     "fmt"
     "log"
     "encoding/json"
+    "time"
 )
 
 func Connect() {
@@ -25,6 +26,8 @@ func SetData(data string) {
 
         if name == nil {
             continue    
+        } else {
+            name = name.(string)    
         }
 
         if dataPoints == nil {
@@ -44,8 +47,9 @@ func SetData(data string) {
             //TODO: add a function to insert                
             fmt.Println(name)
             fmt.Println(value)
-
-            getDateStartSec(timestamp)
+            Zz , Oo := getDateStartSec(timestamp)
+            fmt.Println(Zz)
+            fmt.Println(Oo)
         } else {
             
             //TODO: add a function to bulk insert                
@@ -58,8 +62,17 @@ func SetData(data string) {
     }
 }
 
-func getDateStartSec(timestamp int64) {
-     fmt.Println(timestamp)
+func getDateStartSec(timestamp int64) (int64, int64 ) {
+     const shortForm = "2006-01-02"
+     tm := time.Unix(timestamp/1000, 0)
+     DateStart :=  tm.Format(shortForm)
+
+     st, _ := time.Parse(shortForm, DateStart)
+     dateZeroOclock := st.UTC().Unix() * 1000
+     //fmt.Println(st.UTC().Unix())
+     //fmt.Println(timestamp)
+     //fmt.Println(timestamp - 1000 * st.UTC().Unix() )
+     return dateZeroOclock, timestamp - dateZeroOclock
 }
 
 //func AddDataPoint(timestamp unit32, data []string
