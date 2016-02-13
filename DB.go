@@ -5,7 +5,10 @@ import (
     "log"
     "encoding/json"
     "time"
+    "strconv"
 )
+
+var prefix = "CHRONOSDB\t"
 
 func Connect() {
    GetLink("127.0.0.1", 6379) 
@@ -13,9 +16,9 @@ func Connect() {
 
 func SetData(data string) {
     js, err := sjson.NewJson([]byte(data))
-        if err != nil {                                                                                                    
-            log.Fatalf("Connect failed: %s\n", err.Error())                                                                
-                return                                                                                                     
+        if err != nil {                                                  
+            log.Fatalf("Connect failed: %s\n", err.Error())              
+                return                     
         }
 
     InputArray,_ := js.Array()    
@@ -47,9 +50,12 @@ func SetData(data string) {
             //TODO: add a function to insert                
             fmt.Println(name)
             fmt.Println(value)
-            Zz , Oo := getDateStartSec(timestamp)
-            fmt.Println(Zz)
-            fmt.Println(Oo)
+            zeroOclock , offset := getDateStartSec(timestamp)
+            keyname := prefix + name.(string) + "\t" + strconv.FormatInt(zeroOclock, 10)
+            
+            SetTimeSeries(keyname, strconv.FormatFloat(value, 'f', 6, 64), offset, nil)
+            fmt.Println(keyname)
+            fmt.Println(offset)
         } else {
             
             //TODO: add a function to bulk insert                

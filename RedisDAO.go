@@ -1,26 +1,29 @@
 package ChronosDB
+
 import (
-    "crypto/sha1"
     "menteslibres.net/gosexy/redis"
     "log"
 )
 var client *redis.Client
-var hasher = sha1.New()
-
 
 func GetLink(host string, port uint) {
-
-    client = redis.New()
-    err := client.Connect(host, port)
-    if err != nil {
-        log.Fatalf("Connect failed: %s\n", err.Error())
-        return
+    if client == nil {
+        client = redis.New()
+        err := client.Connect(host, port)
+        if err != nil {
+            log.Fatalf("Connect failed: %s\n", err.Error())
+                return
+        }
     }
 }
 
-func SetTimeSeries(metrics string, key []string, value []string, tag []string, time uint32) {
-    log.Printf("metrics : %s, key : %s, value : %s, tag : %s, time : %d \n", metrics, key, value, tag, time)
-    client.Set("hello", 1)
+func SetTimeSeries(metrics string, value string, time int64, tags []string) (int64, error) {
+    log.Printf("metrics : %s, value : %s, time offset : %d, tag : %s\n", metrics, value, time, tags)
+    input := []interface{}{}
+    input = append(input,time)
+    input = append(input,value)
+    ret, err := client.ZAdd(metrics,  input...)
+    return ret, err
 }
 
 /*
