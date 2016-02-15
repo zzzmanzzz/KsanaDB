@@ -17,6 +17,14 @@ func GetLink(host string, port uint) {
     }
 }
 
+func BulkSetTimeSeries(metrics string, input []interface{}, tags []string) (int64, error) {
+    log.Printf("metrics : %s\n", metrics)
+    log.Println(input)
+    log.Println(tags)
+    ret, err := client.ZAdd(metrics,  input...)
+    return ret, err
+}
+
 func SetTimeSeries(metrics string, value string, time int64, tags []string) (int64, error) {
     log.Printf("metrics : %s, value : %s, time offset : %d, tag : %s\n", metrics, value, time, tags)
     input := []interface{}{}

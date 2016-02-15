@@ -49,11 +49,31 @@ func SetData(data string) {
             keyname, offset := generateTimeSeriesData(name , timestamp)
             SetTimeSeries(keyname, strconv.FormatFloat(value, 'f', 6, 64), offset, nil)
         } else {
-            //inputData := make(map[string][]string)          
-            //TODO: add a function to bulk insert                
+            inputData := make(map[string][]interface{})
+            for _, rowdata := range dataPoints.([]interface{}) {
+                data := rowdata.([]interface{})
+                timestamp, errT := (data[0].(json.Number)).Int64()
+                value, errV := (data[1].(json.Number)).Float64()
 
-            fmt.Println(name)
-            fmt.Println(dataPoints)
+                if errT != nil || errV != nil {
+                    //log.Fatalf("Connect failed: %s\n", err.Error()) 
+                    continue    
+                }
+
+                keyname, offset := generateTimeSeriesData(name , timestamp)
+                inputData[keyname] = append(inputData[keyname], value)
+                inputData[keyname] = append(inputData[keyname], offset)
+            }
+            //TODO: add a function to bulk insert                
+            for k := range inputData {
+                tag := []string{}
+                _, err := BulkSetTimeSeries(k, inputData[k], tag)
+                if err != nil {
+                    //log.Fatalf("Connect failed: %s\n", err.Error()) 
+                    continue    
+                }
+            }
+            fmt.Println(inputData)
         }
 
 
