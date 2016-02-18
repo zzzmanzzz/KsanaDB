@@ -4,7 +4,7 @@ import (
     "fmt"
     "log"
     "encoding/json"
-    "time"
+//    "time"
     "strconv"
 )
 
@@ -79,13 +79,22 @@ func SetData(data string) {
 
     }
 }
-
+/*
+func QueryTimeSeriesData(query string) () {
+    js, err := sjson.NewJson([]byte(query))
+        if err != nil {                                                  
+            log.Fatalf("Connect failed: %s\n", err.Error())              
+                return                     
+        }
+   return js 
+}
+*/
 func generateTimeSeriesData(name string, timestamp int64) (string, int64 ) {
      zeroOclock , offset := getDateStartSec(timestamp)
      keyname := prefix + name + "\t" + strconv.FormatInt(zeroOclock, 10)
      return keyname, offset
 }
-
+/*
 func getDateStartSec(timestamp int64) (int64, int64 ) {
      const shortForm = "2006-01-02"
      tm := time.Unix(timestamp/1000, 0)
@@ -98,6 +107,6 @@ func getDateStartSec(timestamp int64) (int64, int64 ) {
      //fmt.Println(timestamp - 1000 * st.UTC().Unix() )
      return dateZeroOclock, timestamp - dateZeroOclock
 }
-
+*/
 //func AddDataPoint(timestamp unit32, data []string
 
