@@ -76,16 +76,15 @@ func SetData(data string) {
 
     }
 }
-/*
-func QueryTimeSeriesData(query string) () {
-    js, err := sjson.NewJson([]byte(query))
-        if err != nil {                                                  
-            log.Fatalf("Connect failed: %s\n", err.Error())              
-                return                     
-        }
-   return js 
+
+
+func QueryTimeSeriesData(query string)  {
+    dd := query
+    ret, err := relativeToAbsoluteTime(dd, "M")
+    fmt.Println(ret)
+    fmt.Println(err)
 }
-*/
+
 func generateTimeSeriesData(name string, timestamp int64) (string, int64 ) {
      zeroOclock , offset := getDateStartSec(timestamp)
      keyname := prefix + name + "\t" + strconv.FormatInt(zeroOclock, 10)
