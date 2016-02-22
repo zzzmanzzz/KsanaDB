@@ -1,6 +1,6 @@
 package ChronosDB
 import (                                                                        
-        "fmt" 
+//        "fmt" 
 //        "log" 
         "time" 
         "strconv" 
@@ -38,33 +38,6 @@ func relativeToAbsoluteTime(input string, unit string) (int64, error) {
             tResult = tNow.AddDate(int(-diff), 0, 0)
         }
     }
-
-    fmt.Println(tNow)
-    fmt.Println(tResult)
     return tResult.UTC().Unix() * 1000, err
 }
 
-func addMonth(t time.Time, d_month int) time.Time {
-    year :=  t.Year()
-    month := t.Month()
-    day := t.Day()
-    newMonth := int(month) + d_month
-    newLastDay := getLastDay(year, newMonth)
-    var newDay int
-    if day > newLastDay {
-        newDay = newLastDay    
-    } else {
-        newDay = day    
-    }
-    fmt.Println(year)
-    fmt.Println(month)
-    fmt.Println(newMonth)
-    fmt.Println(newLastDay)
-    return time.Date(year, time.Month(month), newDay, t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), t.Location())
-}
-
-func getLastDay(year int, month int)  int {
-    t := time.Date(year, time.Month(month + 1), 1, 0, 0, 0, 0, time.Local) 
-    t = t.AddDate(0, 0, -1)
-    return t.Day()
-}

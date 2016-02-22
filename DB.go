@@ -79,10 +79,6 @@ func SetData(data string) {
 
 
 func QueryTimeSeriesData(query string)  {
-    dd := query
-    ret, err := relativeToAbsoluteTime(dd, "M")
-    fmt.Println(ret)
-    fmt.Println(err)
 }
 
 func generateTimeSeriesData(name string, timestamp int64) (string, int64 ) {
