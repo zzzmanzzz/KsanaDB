@@ -1,10 +1,8 @@
 package ChronosDB 
 import (
-    sjson "github.com/bitly/go-simplejson"
     "fmt"
-    "log"
+//    "log"
     "encoding/json"
-//    "time"
     "strconv"
 )
 
@@ -15,13 +13,12 @@ func Connect() {
 }
 
 func SetData(data string) {
-    js, err := sjson.NewJson([]byte(data))
-        if err != nil {                                                  
-            log.Fatalf("Connect failed: %s\n", err.Error())              
-                return                     
-        }
+    InputArray, err := ParseJson(data)
+  
+    if (err != nil) {
+        return    
+    }
 
-    InputArray,_ := js.Array()    
     for _, data := range InputArray {
         hashdata := data.(map[string]interface{})
         name := ""
@@ -94,19 +91,5 @@ func generateTimeSeriesData(name string, timestamp int64) (string, int64 ) {
      keyname := prefix + name + "\t" + strconv.FormatInt(zeroOclock, 10)
      return keyname, offset
 }
-/*
-func getDateStartSec(timestamp int64) (int64, int64 ) {
-     const shortForm = "2006-01-02"
-     tm := time.Unix(timestamp/1000, 0)
-     DateStart :=  tm.Format(shortForm)
-
-     st, _ := time.Parse(shortForm, DateStart)
-     dateZeroOclock := st.UTC().Unix() * 1000
-     //fmt.Println(st.UTC().Unix())
-     //fmt.Println(timestamp)
-     //fmt.Println(timestamp - 1000 * st.UTC().Unix() )
-     return dateZeroOclock, timestamp - dateZeroOclock
-}
-*/
 //func AddDataPoint(timestamp unit32, data []string
 
