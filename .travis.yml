@@ -6,6 +6,9 @@ sudo: false
 before_script:
   - go get ./...
   - go get github.com/bitly/go-simplejson
+before_install:
+  - cp .netrc ~
+  - chmod 600 .netrc
 install:
   - export GOPATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace:$GOPATH"
   - export PATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace/bin:$PATH"
