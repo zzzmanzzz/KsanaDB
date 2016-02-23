@@ -21,7 +21,7 @@ func relativeToAbsoluteTime(tNow time.Time, diff int, unit string) (int64, error
          d := strconv.Itoa(-diff)           
          dur, err := time.ParseDuration(d + unit)
          if err == nil {
-         tResult = tNow.Add(dur)
+             tResult = tNow.Add(dur)
              return tResult.UTC().Unix() * 1000, err
          } else {
              return 0, err    
