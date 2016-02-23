@@ -1,7 +1,10 @@
 language: go
+go:
+  - 1.6
+  - tip
 sudo: false
 before_script:
-  - go vet ./...
+  - go get ./...
   - go get github.com/bitly/go-simplejson
 install:
   - export GOPATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace:$GOPATH"
