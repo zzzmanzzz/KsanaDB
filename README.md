@@ -1,2 +1,2 @@
-# github.com/zzzmanzzz/ChronosDB
-                                                                                                                           [![Build Status](https://travis-ci.org/zzzmanzzz/ChronosDB.svg)](https://travis-ci.org/zzzmanzzz/ChronosDB) 
+#ChronosDB
+[![Build Status](https://travis-ci.org/zzzmanzzz/ChronosDB.svg?branch=master)](https://travis-ci.org/zzzmanzzz/ChronosDB) 
