@@ -18,8 +18,7 @@ func getDateStartSec(timestamp int64) ( int64, int64 ) {
         return dateZeroOclock, timestamp - dateZeroOclock 
 } 
 
-func relativeToAbsoluteTime(input string, unit string) (int64, error) {
-    tNow := time.Now()
+func relativeToAbsoluteTime(tNow time.Time, input string, unit string) (int64, error) {
     var tResult time.Time 
     diff, err := strconv.ParseInt(input, 10, 64)
 
