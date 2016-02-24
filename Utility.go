@@ -40,7 +40,9 @@ func relativeToAbsoluteTime(tNow time.Time, diff int, unit string) (int64, error
     return tResult.UTC().Unix() * 1000, nil 
 }
 
-func getTimeseriesQueryCmd(from int64, to int64) ([]map[string]string )  {
+func getTimeseriesQueryCmd(prefix string, metricName string, from int64, to int64) ([]map[string]string )  {
+       keyPrefix := prefix + metricName + "\t"
+     
        from0, fromOffset := getDateStartSec(from)
        to0, toOffset := getDateStartSec(to)
        begin := time.Unix(from0/1000, from0%1000)
@@ -49,7 +51,7 @@ func getTimeseriesQueryCmd(from int64, to int64) ([]map[string]string )  {
        ret := []map[string]string{}
        element := make( map[string]string)
 
-       element["zeroHour"] = strconv.FormatInt(from0, 10)
+       element["keyName"] = keyPrefix + strconv.FormatInt(from0, 10)
        element["from"] = strconv.FormatInt(fromOffset, 10) 
 
        if from0 == to0 {
@@ -64,14 +66,14 @@ func getTimeseriesQueryCmd(from int64, to int64) ([]map[string]string )  {
 
        for i := begin.AddDate(0, 0, 1) ;  i.Before(end) ; i = i.AddDate(0, 0, 1) {
            element := make( map[string]string)
-           element["zeroHour"] = strconv.FormatInt(i.UTC().Unix()*1000, 10)
+           element["keyName"] = keyPrefix + strconv.FormatInt(i.UTC().Unix()*1000, 10)
            element["from"] = "-inf"
            element["to"] = "inf"
            ret = append(ret, element)
        }
 
        element = make( map[string]string)
-       element["zeroHour"] = strconv.FormatInt(to0, 10)
+       element["keyName"] = keyPrefix + strconv.FormatInt(to0, 10)
        element["from"] = "-inf"
        element["to"] = strconv.FormatInt(toOffset, 10)
 
