@@ -61,7 +61,6 @@ func SetData(data string) {
                 inputData[keyname] = append(inputData[keyname], offset)
                 inputData[keyname] = append(inputData[keyname], value)
             }
-            //TODO: add a function to bulk insert                
             for k := range inputData {
                 tag := []string{}
                 _, err := BulkSetTimeSeries(k, inputData[k], tag)

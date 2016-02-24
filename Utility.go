@@ -7,12 +7,10 @@ import (
 ) 
 
 func getDateStartSec(timestamp int64) ( int64, int64 ) { 
-    const shortForm = "2006-01-02"                                             
         tm := time.Unix(timestamp/1000, 0) 
-        DateStart :=  tm.Format(shortForm)
-        st, _ := time.Parse(shortForm, DateStart) 
+        st := time.Date(tm.Year(), tm.Month(), tm.Day(), 0, 0, 0, 0, time.Local)
         dateZeroOclock := st.UTC().Unix() * 1000 
-        return dateZeroOclock, timestamp - dateZeroOclock 
+        return dateZeroOclock, tm.UTC().Unix() * 1000 - dateZeroOclock 
 } 
 
 func relativeToAbsoluteTime(tNow time.Time, diff int, unit string) (int64, error) {
