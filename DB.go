@@ -58,8 +58,8 @@ func SetData(data string) {
                 }
 
                 keyname, offset := generateTimeSeriesData(name , timestamp)
-                inputData[keyname] = append(inputData[keyname], value)
                 inputData[keyname] = append(inputData[keyname], offset)
+                inputData[keyname] = append(inputData[keyname], value)
             }
             //TODO: add a function to bulk insert                
             for k := range inputData {
