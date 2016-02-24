@@ -6,6 +6,7 @@ sudo: false
 before_script:
   - go get ./...
   - go get github.com/bitly/go-simplejson
+  - go get github.com/garyburd/redigo/redis
 before_install:
   - cp .netrc ~
   - chmod 600 .netrc

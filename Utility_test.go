@@ -3,6 +3,7 @@ import (
     "testing"
     "time"
     "strconv"
+//    "fmt"
 )
 
 func Test_relativeToAbsoluteTimeInMilliSecond(t *testing.T) {
@@ -127,3 +128,13 @@ func Test_relativeToAbsoluteTimeInYear(t *testing.T) {
         }
     }
 }
+
+func Test_getTimeseriesQueryCmd(t *testing.T) {
+    now := time.Now().UTC().Unix() * 1000
+    then := time.Now().UTC().Unix() * 1000 + 86400000 * 5 + 1000
+    ret := getTimeseriesQueryCmd(now, then)
+    if len(ret) != 6 {
+       t.Error(ret)
+    }
+}
+
