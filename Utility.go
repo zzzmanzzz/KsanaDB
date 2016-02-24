@@ -80,3 +80,9 @@ func getTimeseriesQueryCmd(prefix string, metricName string, from int64, to int6
        ret = append(ret, element)
        return ret
 }
+
+func generateTimeSeriesData(prefix string, name string, timestamp int64) (string, int64 ) {
+     zeroOclock , offset := getDateStartSec(timestamp)
+     keyname := prefix + name + "\t" + strconv.FormatInt(zeroOclock, 10)
+     return keyname, offset
+}

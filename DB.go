@@ -43,7 +43,7 @@ func SetData(data string) {
                 //log.Fatalf("Connect failed: %s\n", err.Error()) 
                 continue    
             }
-            keyname, offset := generateTimeSeriesData(name , timestamp)
+            keyname, offset := generateTimeSeriesData(prefix, name , timestamp)
             SetTimeSeries(keyname, strconv.FormatFloat(value, 'f', 6, 64), offset, nil)
         } else {
             inputData := make(map[string][]interface{})
@@ -57,7 +57,7 @@ func SetData(data string) {
                     continue    
                 }
 
-                keyname, offset := generateTimeSeriesData(name , timestamp)
+                keyname, offset := generateTimeSeriesData(prefix, name , timestamp)
                 inputData[keyname] = append(inputData[keyname], offset)
                 inputData[keyname] = append(inputData[keyname], value)
             }
@@ -81,10 +81,5 @@ func SetData(data string) {
 func QueryTimeSeriesData(query string)  {
 }
 
-func generateTimeSeriesData(name string, timestamp int64) (string, int64 ) {
-     zeroOclock , offset := getDateStartSec(timestamp)
-     keyname := prefix + name + "\t" + strconv.FormatInt(zeroOclock, 10)
-     return keyname, offset
-}
 //func AddDataPoint(timestamp unit32, data []string
 
