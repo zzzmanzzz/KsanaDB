@@ -6,6 +6,8 @@ import (
 //    "encoding/json"
 //    "strconv"
 )
+
+
 func ParseJson(data string) ([]interface{}, error) {
     js, err := sjson.NewJson([]byte(data))
         if err != nil {                                                  
@@ -13,5 +15,15 @@ func ParseJson(data string) ([]interface{}, error) {
             return nil, err             
         }
     InputArray,_ := js.Array()
+    return InputArray, nil
+}
+
+func ParseJsonHash(data string) (map[string] interface{}, error) {
+    js, err := sjson.NewJson([]byte(data))
+        if err != nil {                                                  
+            log.Fatalf("Connect failed: %s\n", err.Error())              
+            return nil, err             
+        }
+    InputArray,_ := js.Map()
     return InputArray, nil
 }

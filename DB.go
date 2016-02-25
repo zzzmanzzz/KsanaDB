@@ -1,6 +1,7 @@
 package ChronosDB 
 import (
     "fmt"
+    "time"
 //    "log"
     "encoding/json"
     "strconv"
@@ -43,8 +44,17 @@ func SetData(data string) {
                 //log.Fatalf("Connect failed: %s\n", err.Error()) 
                 continue    
             }
+
+            element := make( map[string]string)
             keyname, offset := generateTimeSeriesData(prefix, name , timestamp)
-            SetTimeSeries(keyname, strconv.FormatFloat(value, 'f', 6, 64), offset, nil)
+ 
+            element["timestamp"] = strconv.FormatInt(timestamp, 10)
+            element["value"] = strconv.FormatFloat(value, 'f', 6, 64)
+            element["tags"] = ""
+ 
+            jstring, _ := json.Marshal(element)
+            input := string(jstring[:])
+            SetTimeSeries(keyname, fmt.Sprint(input), offset)
         } else {
             inputData := make(map[string][]interface{})
             for _, rowdata := range dataPoints.([]interface{}) {
@@ -57,13 +67,20 @@ func SetData(data string) {
                     continue    
                 }
 
+                
+                element := make( map[string]string)
+                element["timestamp"] = strconv.FormatInt(timestamp, 10)
+                element["value"] = strconv.FormatFloat(value, 'f', 6, 64)
+                element["tags"] = ""
+ 
+                jstring, _ := json.Marshal(element)
+                input := string(jstring[:])
                 keyname, offset := generateTimeSeriesData(prefix, name , timestamp)
                 inputData[keyname] = append(inputData[keyname], offset)
-                inputData[keyname] = append(inputData[keyname], value)
+                inputData[keyname] = append(inputData[keyname], input)
             }
             for k := range inputData {
-                tag := []string{}
-                _, err := BulkSetTimeSeries(k, inputData[k], tag)
+                _, err := BulkSetTimeSeries(k, inputData[k])
                 if err != nil {
                     //log.Fatalf("Connect failed: %s\n", err.Error()) 
                     continue    
@@ -77,7 +94,10 @@ func SetData(data string) {
 }
 
 
-func QueryTimeSeriesData(query string)  {
+func QueryTimeSeriesData(name string, start int64, stop int64)  {
+    fmt.Println(time.Now())
+    queryTimeSeries(prefix , name , start , stop )
+    fmt.Println(time.Now())
 }
 
 //func AddDataPoint(timestamp unit32, data []string
