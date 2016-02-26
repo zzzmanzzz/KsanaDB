@@ -58,7 +58,7 @@ func SetTimeSeries(metrics string, value string, time int64) (int, error) {
     return redis.Int(client.Do("ZADD", redis.Args{metrics}.AddFlat(input)...))
 }
 
-func queryTimeSeries(prefix string, name string, start int64, stop int64) ([]map[string] interface{}) {
+func queryTimeSeries(prefix string, name string, start int64, stop int64) ([]string) {
     //options := ""//"withscores"
     cmds := getTimeseriesQueryCmd(prefix, name, start, stop)
     for _, cmd := range cmds {
@@ -67,18 +67,14 @@ func queryTimeSeries(prefix string, name string, start int64, stop int64) ([]map
     }
     client.Flush()
     
-    ret := []map[string] interface{}{}
+    ret := []string{}
     for _,_ = range cmds {
         p, err := redis.Strings(client.Receive())
         if err != nil {
             continue
         }
-        for _,d :=  range p {
-            r, _ := ParseJsonHash(d)
-           ret = append(ret, r)
-        }
+        ret = append(ret, p...)
     }
-    
     return ret
 }
 

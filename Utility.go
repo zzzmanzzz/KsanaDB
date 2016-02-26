@@ -3,7 +3,8 @@ import (
 //        "fmt" 
 //        "log" 
         "time" 
-        "strconv" 
+        "strconv"
+        "errors"
 ) 
 
 func getDateStartSec(timestamp int64) ( int64, int64 ) { 
@@ -15,12 +16,17 @@ func getDateStartSec(timestamp int64) ( int64, int64 ) {
 
 func relativeToAbsoluteTime(tNow time.Time, diff int, unit string) (int64, error) {
     var tResult time.Time 
-    if unit == "ms" || unit == "s" || unit == "m" || unit == "h" {
+    if unit == "ms" {
+        return tNow.UTC().Unix() * 1000 - int64(diff), nil
+    }
+
+    if unit == "s" || unit == "m" || unit == "h" {
          d := strconv.Itoa(-diff)           
          dur, err := time.ParseDuration(d + unit)
          if err == nil {
              tResult = tNow.Add(dur)
-             return tResult.UTC().Unix() * 1000, err
+             ret := tResult.UTC().Unix() * 1000 
+             return ret, err
          } else {
              return 0, err    
          }
@@ -34,8 +40,16 @@ func relativeToAbsoluteTime(tNow time.Time, diff int, unit string) (int64, error
         tResult = tNow.AddDate(0, -diff, 0)
     } else if unit == "y" {
         tResult = tNow.AddDate(-diff, 0, 0)
+    } else {
+        return 0, errors.New("unfeasible unit " + unit)    
     }
+
     return tResult.UTC().Unix() * 1000, nil 
+}
+
+func getTimeRange(reference int64, diff int, unit string) (int64, error) {
+    ret, err := relativeToAbsoluteTime(time.Unix(reference/1000, 1000000 * (reference%1000)),  -diff, unit)
+    return ret - reference, err
 }
 
 func getTimeseriesQueryCmd(prefix string, metricName string, from int64, to int64) ([]map[string]string )  {
@@ -43,8 +57,8 @@ func getTimeseriesQueryCmd(prefix string, metricName string, from int64, to int6
      
        from0, fromOffset := getDateStartSec(from)
        to0, toOffset := getDateStartSec(to)
-       begin := time.Unix(from0/1000, from0%1000)
-       end := time.Unix(to0/1000, to0%1000)
+       begin := time.Unix(from0/1000, 1000000 * (from0%1000))
+       end := time.Unix(to0/1000, 1000000 * (to0%1000))
        
        ret := []map[string]string{}
        element := make( map[string]string)

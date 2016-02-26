@@ -94,10 +94,14 @@ func SetData(data string) {
 }
 
 
-func QueryTimeSeriesData(name string, start int64, stop int64)  {
+func QueryTimeSeriesData(name string, start int64, stop int64, arrgeationFunction string, timeRange int, unit string) ([]map[string]interface{} , error) {
     fmt.Println(time.Now())
-    queryTimeSeries(prefix , name , start , stop )
+    rawData := queryTimeSeries(prefix , name , start , stop )
+    data, err := queryWorker(rawData, start, stop, arrgeationFunction, unit, timeRange)
     fmt.Println(time.Now())
+    fmt.Println("Data length")
+    fmt.Println(len(data))
+    return data, err
 }
 
 //func AddDataPoint(timestamp unit32, data []string

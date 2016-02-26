@@ -15,10 +15,7 @@ func Test_relativeToAbsoluteTimeInMilliSecond(t *testing.T) {
         t.Error(err)    
     } else {
         diff := input
-        d := strconv.Itoa(-diff)
-        dur,_  := time.ParseDuration(d + "ms")
-        tResult := now.Add(dur) 
-        if tResult.UTC().Unix() * 1000 != ret {
+        if now.UTC().Unix() * 1000 - int64(diff) != ret {
             t.Error(ret)    
         }
     }
@@ -137,5 +134,40 @@ func Test_getTimeseriesQueryCmd(t *testing.T) {
        t.Error(ret)
     }
     fmt.Println(ret)
+}
+
+func Test_getTimeRange(t *testing.T) {
+    reference := time.Now().Unix() * 1000
+    Onemillisec, err := getTimeRange(reference, 1, "ms")
+    Onesec, err := getTimeRange(reference, 1, "s")
+    Onemin, err := getTimeRange(reference, 1, "m")
+    Oneday, err := getTimeRange(reference, 1, "d")
+    Oneweek, err := getTimeRange(reference, 1, "w")
+
+    if err != nil {
+        t.Error(err)    
+    }
+    if Onemillisec != 1 {
+        t.Error("1 millisec range fail")
+        fmt.Println(Onemillisec)
+    }
+    if Onesec != 1000 {
+        t.Error("1 sec range fail")
+        fmt.Println(Onesec)
+    }
+    if Onemin != 60000 {
+        t.Error("1 min range fail")
+        fmt.Println(Onemin)
+    }
+    if Oneday != 86400000 {
+        t.Error("1 day range fail")
+        fmt.Println(Oneday)
+    }
+    if Oneweek != 7 * 86400000 {
+        t.Error("1 week range fail")
+        fmt.Println(Oneday)
+    }
+
+
 }
 
