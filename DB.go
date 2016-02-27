@@ -7,7 +7,7 @@ import (
     "strconv"
 )
 
-var prefix = "CHRONOSDBv1\t"
+var prefix = "KSANADBv1\t"
 
 func Connect() {
    GetLink("127.0.0.1", 6379) 
