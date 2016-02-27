@@ -1,4 +1,4 @@
-package ChronosDB
+package KsanaDB
 
 import (
     redis "github.com/garyburd/redigo/redis"
