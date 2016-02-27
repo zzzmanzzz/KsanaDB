@@ -1,4 +1,4 @@
-package ChronosDB  
+package KsanaDB  
 
 func Sum(arr *[]map[string]interface{}, sample int, sampleUnit string) {
     
