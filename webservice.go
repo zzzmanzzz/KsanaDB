@@ -1,4 +1,4 @@
-package ChronosDB
+package KsanaDB
 
 import (
     "github.com/go-martini/martini"
