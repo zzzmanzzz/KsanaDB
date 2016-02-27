@@ -1,5 +1,5 @@
 
-package ChronosDB 
+package KsanaDB
 import (
     sjson "github.com/bitly/go-simplejson"
     "log"
