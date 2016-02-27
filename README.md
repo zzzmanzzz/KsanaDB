@@ -1,2 +1,2 @@
-#ChronosDB
-[![Build Status](https://travis-ci.org/zzzmanzzz/ChronosDB.svg?branch=master)](https://travis-ci.org/zzzmanzzz/ChronosDB) 
+#KsanaDB
+[![Build Status](https://travis-ci.org/zzzmanzzz/KsanaDB.svg?branch=master)](https://travis-ci.org/zzzmanzzz/KsanaDB) 
