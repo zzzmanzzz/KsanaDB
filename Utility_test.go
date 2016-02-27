@@ -1,4 +1,4 @@
-package ChronosDB 
+package KsanaDB 
 import (
     "testing"
     "time"
