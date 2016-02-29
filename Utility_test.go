@@ -129,7 +129,7 @@ func Test_relativeToAbsoluteTimeInYear(t *testing.T) {
 func Test_getTimeseriesQueryCmd(t *testing.T) {
     now := time.Now().UTC().Unix() * 1000
     then := time.Now().UTC().Unix() * 1000 + 86400000 * 5 + 1000
-    ret := getTimeseriesQueryCmd("CHRONOSDBv1\t", "test", now, then)
+    ret := getTimeseriesQueryCmd("KSANADBv1\t", "test", now, then)
     if len(ret) != 6 {
        t.Error(ret)
     }
