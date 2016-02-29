@@ -39,10 +39,22 @@ func SetData(data string) {
                 continue    
             }
             timestamp, err := (hashdata["timestamp"].(json.Number)).Int64()
-            
+ 
             if err != nil {
-                //log.Fatalf("Connect failed: %s\n", err.Error()) 
-                continue    
+                continue
+            }
+
+            kvArray := []string{}
+         
+            for k, v := range hashdata["tags"].(map[string]interface{}) {
+                kvArray = append(kvArray, fmt.Sprintf("%s\t%s",k,v.(string)))
+            }
+            
+            //TODO:generate kv number
+            ret := setTags(prefix, name, kvArray)
+            fmt.Println("#####")
+            for _,e := range ret {
+               fmt.Println(e)
             }
 
             element := make( map[string]string)
@@ -86,7 +98,7 @@ func SetData(data string) {
                     continue    
                 }
             }
-            fmt.Println(inputData)
+            //fmt.Println(inputData)
         }
 
 

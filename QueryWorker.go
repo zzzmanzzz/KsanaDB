@@ -20,7 +20,6 @@ func queryWorker(dataList []string, startTimestamp int64, endTimestamp int64, ag
 
     timeRange, err := getTimeRange(startTimestamp, sampleRange, sampleUnit )
 
- 
     if err != nil {
          return nil, err    
     }
@@ -44,8 +43,8 @@ func queryWorker(dataList []string, startTimestamp int64, endTimestamp int64, ag
             rangeEndTime = rangeStartTime + timeRange
         } 
  
-        fmt.Printf("###\nvc   \t%f\nstart\t%d\ntc   \t%d\ntime Range %d\nstartTimestamp  %d\n", 
-            vc, rangeStartTime, rangeEndTime, timeRange,startTimestamp)
+//        fmt.Printf("###\nvc   \t%f\nstart\t%d\ntc   \t%d\nend  \t%d\ntime Range %d\nstartTimestamp  %d\n", 
+//            vc, rangeStartTime, tc, rangeEndTime, timeRange,startTimestamp)
 
         if tc >= rangeEndTime {
             ele := make(map[string]interface{})
@@ -56,8 +55,8 @@ func queryWorker(dataList []string, startTimestamp int64, endTimestamp int64, ag
             rangeStartTime = tc - ( tc - startTimestamp ) % timeRange
             rangeEndTime = rangeStartTime + timeRange
             sum = vc 
-        fmt.Printf("@@@\nvc   \t%f\nstart\t%d\ntc   \t%d\ntime Range %d\nstartTimestamp  %d\n", 
-            vc, rangeStartTime, rangeEndTime, timeRange,startTimestamp)
+//        fmt.Printf("@@@\nvc   \t%f\nstart\t%d\ntc   \t%d\nend  \t%d\ntime Range %d\nstartTimestamp  %d\n", 
+//            vc, rangeStartTime, tc, rangeEndTime, timeRange,startTimestamp)
         } else {
             sum = sum + vc
         }
@@ -65,6 +64,6 @@ func queryWorker(dataList []string, startTimestamp int64, endTimestamp int64, ag
     fmt.Print("sum ")
     fmt.Println(sum)
 
-//    fmt.Println(ret)
     return ret, nil
 }
+

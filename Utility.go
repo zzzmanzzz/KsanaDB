@@ -98,3 +98,4 @@ func generateTimeSeriesData(prefix string, name string, timestamp int64) (string
      keyname := prefix + name + "\t" + strconv.FormatInt(zeroOclock, 10)
      return keyname, offset
 }
+
