@@ -79,7 +79,7 @@ func queryTimeSeries(prefix string, name string, start int64, stop int64) ([]str
 }
 
 
-func setTags(prefix string, metrics string, tags []string) ([]string) {
+func setTags(prefix string, metrics string, tags []string) (string) {
     hashName := prefix + metrics + "\tTagHash"
     listName := prefix + metrics + "\tTagList"
 
@@ -96,10 +96,10 @@ func setTags(prefix string, metrics string, tags []string) ([]string) {
             scriptArgs[i] = v
     }
 
-    s := getLuaScript("zzz")
+    s := getLuaScript("setTag")
     script := redis.NewScript(len(tags), s)
 
-    result, err := redis.Strings(script.Do(client, scriptArgs...))
+    result, err := redis.String(script.Do(client, scriptArgs...))
     if err != nil {
         log.Println(err)    
     }

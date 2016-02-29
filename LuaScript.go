@@ -1,7 +1,6 @@
 package KsanaDB
 
 func getLuaScript(name string) string {
-    name = name
     setTag :=` 
         local ret={};
         local tagHashName = ARGV[1];
@@ -19,7 +18,12 @@ func getLuaScript(name string) string {
             seq = redis.call('HGET', tagHashName, k);
             table.insert(ret, seq);
         end
-        return ret;
+        return cjson.encode(ret);
     `
-    return setTag
+    ret := "" 
+
+    if name == "setTag" {
+        ret = setTag
+    }
+    return ret
 }
