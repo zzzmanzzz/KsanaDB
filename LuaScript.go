@@ -20,6 +20,8 @@ func getLuaScript(name string) string {
         end
         return cjson.encode(ret);
     `
+
+
     ret := "" 
 
     if name == "setTag" {
