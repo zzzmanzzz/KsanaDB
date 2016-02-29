@@ -44,25 +44,15 @@ func SetData(data string) {
                 continue
             }
 
-            kvArray := []string{}
-         
-            for k, v := range hashdata["tags"].(map[string]interface{}) {
-                kvArray = append(kvArray, fmt.Sprintf("%s\t%s",k,v.(string)))
-            }
-            
-            //TODO:generate kv number
-            ret := setTags(prefix, name, kvArray)
-            fmt.Println("#####")
-            for _,e := range ret {
-               fmt.Println(e)
-            }
 
             element := make( map[string]string)
             keyname, offset := generateTimeSeriesData(prefix, name , timestamp)
+            tagSeq := getTagSeq(hashdata["tags"].(map[string]interface{}), prefix, name) 
+
  
             element["timestamp"] = strconv.FormatInt(timestamp, 10)
             element["value"] = strconv.FormatFloat(value, 'f', 6, 64)
-            element["tags"] = ""
+            element["tags"] = tagSeq
  
             jstring, _ := json.Marshal(element)
             input := string(jstring[:])
@@ -80,10 +70,11 @@ func SetData(data string) {
                 }
 
                 
+                tagSeq := getTagSeq(hashdata["tags"].(map[string]interface{}), prefix, name) 
                 element := make( map[string]string)
                 element["timestamp"] = strconv.FormatInt(timestamp, 10)
                 element["value"] = strconv.FormatFloat(value, 'f', 6, 64)
-                element["tags"] = ""
+                element["tags"] = tagSeq
  
                 jstring, _ := json.Marshal(element)
                 input := string(jstring[:])

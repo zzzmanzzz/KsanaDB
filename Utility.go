@@ -1,10 +1,11 @@
 package KsanaDB
 import (                                                                        
-//        "fmt" 
-//        "log" 
-        "time" 
-        "strconv"
-        "errors"
+     "fmt" 
+//   "log" 
+     "time" 
+     "strconv"
+     "errors"
+     "encoding/json"
 ) 
 
 func getDateStartSec(timestamp int64) ( int64, int64 ) { 
@@ -99,3 +100,19 @@ func generateTimeSeriesData(prefix string, name string, timestamp int64) (string
      return keyname, offset
 }
 
+func getTagSeq (tags map[string]interface{}, prefix string, name string) (string) {
+    var jTagSeq string
+
+    jTagSeq = ""
+    if tags != nil {
+        kvArray := []string{}
+        for k, v := range tags {
+            kvArray = append(kvArray, fmt.Sprintf("%s\t%s",k,v.(string))) 
+        }
+        tagSeq := setTags(prefix, name, kvArray)
+        jstr, _ := json.Marshal(tagSeq)                                                                           
+        jTagSeq = string(jstr[:])                                                                                 
+    } 
+    fmt.Println(jTagSeq)
+    return jTagSeq
+}
