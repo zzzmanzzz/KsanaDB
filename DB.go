@@ -104,7 +104,7 @@ func QueryTimeSeriesData(name string, start int64, stop int64, arrgeationFunctio
     return data, err
 }
 
-func GetMetricsTag(name string, target string)  {
-    ret := getTags(name, target)    
+func GetMetricsTag(name string, target string, keyName string)  {
+    ret := getTags(name, target, keyName)    
     fmt.Println(ret)
 }

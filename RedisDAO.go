@@ -106,13 +106,12 @@ func setTags(prefix string, metrics string, tags []string) (string) {
     return result
 } 
 
-func getTags(metrics string, target string) (string) {
+func getTags(metrics string, target string, keyName string) (string) {
     listName := prefix + metrics + "\tTagList"
     s := getLuaScript("getTag")
     script := redis.NewScript(0, s)
 
-    fmt.Println(listName)
-    result, err := redis.String(script.Do(client, listName, target))
+    result, err := redis.String(script.Do(client, listName, target, keyName))
     if err != nil {
         log.Println(err)    
     }
