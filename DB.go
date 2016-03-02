@@ -45,7 +45,7 @@ func SetData(data string) {
             }
 
 
-            element := make( map[string]string)
+            element := make( map[string]interface{})
             keyname, offset := generateTimeSeriesData(prefix, name , timestamp)
             tagSeq := getTagSeq(hashdata["tags"].(map[string]interface{}), prefix, name) 
 
@@ -71,7 +71,7 @@ func SetData(data string) {
 
                 
                 tagSeq := getTagSeq(hashdata["tags"].(map[string]interface{}), prefix, name) 
-                element := make( map[string]string)
+                element := make( map[string]interface{})
                 element["timestamp"] = strconv.FormatInt(timestamp, 10)
                 element["value"] = strconv.FormatFloat(value, 'f', 6, 64)
                 element["tags"] = tagSeq
@@ -91,11 +91,8 @@ func SetData(data string) {
             }
             //fmt.Println(inputData)
         }
-
-
     }
 }
-
 
 func QueryTimeSeriesData(name string, start int64, stop int64, arrgeationFunction string, timeRange int, unit string) ([]map[string]interface{} , error) {
     fmt.Println(time.Now())
@@ -107,5 +104,7 @@ func QueryTimeSeriesData(name string, start int64, stop int64, arrgeationFunctio
     return data, err
 }
 
-//func AddDataPoint(timestamp unit32, data []string
-
+func GetMetricsTag(name string, target string)  {
+    ret := getTags(name, target)    
+    fmt.Println(ret)
+}

@@ -106,19 +106,18 @@ func setTags(prefix string, metrics string, tags []string) (string) {
     return result
 } 
 
-/*
-func SetTagID(metrics string, tag string, tagID uint64) (int64, error) {
-    Mkey := metrics + "_TagID"
-    ID, err := client.HLen(Mkey)
+func getTags(metrics string, target string) (string) {
+    listName := prefix + metrics + "\tTagList"
+    s := getLuaScript("getTag")
+    script := redis.NewScript(0, s)
+
+    fmt.Println(listName)
+    result, err := redis.String(script.Do(client, listName, target))
     if err != nil {
-        log.Fatalf("HLen failed: %s\n", err.Error())
-        return -1, err
+        log.Println(err)    
     }
-    ID += 1
-    client.HSetNX(Mkey, tag, ID)
-    return ID, nil
+    return result
 } 
-*/
 
 func Close() {
     client.Close()   

@@ -100,10 +100,10 @@ func generateTimeSeriesData(prefix string, name string, timestamp int64) (string
      return keyname, offset
 }
 
-func getTagSeq (tags map[string]interface{}, prefix string, name string) (string) {
+func getTagSeq (tags map[string]interface{}, prefix string, name string) ([]interface{}) {
     var jTagSeq string
 
-    jTagSeq = ""
+    jTagSeq = "[]"
     if tags != nil {
         kvArray := []string{}
         for k, v := range tags {
@@ -114,6 +114,7 @@ func getTagSeq (tags map[string]interface{}, prefix string, name string) (string
             kvArray = append(kvArray, fmt.Sprintf("%s\t%s",k,v.(string))) 
         }
         jTagSeq = setTags(prefix, name, kvArray)
-    } 
-    return jTagSeq
+    }
+    jarray,_ := ParseJson(jTagSeq)
+    return jarray
 }
