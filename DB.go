@@ -94,10 +94,10 @@ func SetData(data string) {
     }
 }
 
-func QueryTimeSeriesData(name string, start int64, stop int64, arrgeationFunction string, timeRange int, unit string) ([]map[string]interface{} , error) {
+func QueryTimeSeriesData(name string, start int64, stop int64, aggreationFunction string, timeRange int, unit string) ([]map[string]interface{} , error) {
     fmt.Println(time.Now())
     rawData := queryTimeSeries(prefix , name , start , stop )
-    data, err := queryWorker(rawData, start, stop, arrgeationFunction, unit, timeRange)
+    data, err := queryWorker(rawData, start, stop, aggreationFunction, unit, timeRange)
     fmt.Println(time.Now())
     fmt.Println("Data length")
     fmt.Println(len(data))
