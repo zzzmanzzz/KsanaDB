@@ -1,22 +1,20 @@
 package KsanaDB
 import(
     "fmt"
-     "strconv" 
+//     "strconv" 
      "log"
 //    "time"
+//     "encoding/json"
 )
 
 
-func queryWorker(dataList []string, startTimestamp int64, endTimestamp int64, aggregateFunction string, sampleUnit string, sampleRange int) ([]map[string]interface{}, error){
+func queryWorker(dataList []string, startTimestamp int64, tagFilter []int64, aggregateFunction string, sampleUnit string, sampleRange int) ([]map[string]interface{}, error){
     ret := []map[string]interface{}{}
-
-    var currentElem  map[string]interface{}
 
     //check this and next one time
     end := len(dataList)  
 
     aggregateFunction = aggregateFunction
-    endTimestamp = endTimestamp
 
     timeRange, err := getTimeRange(startTimestamp, sampleRange, sampleUnit )
 
@@ -28,14 +26,17 @@ func queryWorker(dataList []string, startTimestamp int64, endTimestamp int64, ag
     rangeStartTime := int64(0)
     rangeEndTime := int64(0)
 
+    hasTagFilter := len(tagFilter) > 0
     for i := 0; i< end; i ++ {
-        currentElem, err = ParseJsonHash(dataList[i])
-        tc, err := strconv.ParseInt(currentElem["timestamp"].(string), 10, 64)
-        vc, err := strconv.ParseFloat(currentElem["value"].(string), 64)
-       
+        tc, vc, tags, err := ParseJsonHash(dataList[i])
+
         if err != nil {
             log.Println(err)
             continue    
+        }
+        
+        if hasTagFilter && !filter(tagFilter, tags) {
+            continue
         }
 
         if i == 0 {
@@ -51,6 +52,7 @@ func queryWorker(dataList []string, startTimestamp int64, endTimestamp int64, ag
 
             ele["timestamp"] = rangeStartTime
             ele["value"] = sum
+            ele["tags"] = tags
             ret = append(ret, ele) 
             rangeStartTime = tc - ( tc - startTimestamp ) % timeRange
             rangeEndTime = rangeStartTime + timeRange
