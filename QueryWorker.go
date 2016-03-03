@@ -29,15 +29,17 @@ func queryWorker(dataList []string, startTimestamp int64, tagFilter []int64, agg
     hasTagFilter := len(tagFilter) > 0
     for i := 0; i< end; i ++ {
         tc, vc, tags, err := ParseJsonHash(dataList[i])
-
+     
+        //fmt.Println(tags)
         if err != nil {
             log.Println(err)
             continue    
         }
         
-        if hasTagFilter && !filter(tagFilter, tags) {
+        if hasTagFilter && filter(tagFilter, tags) == false {
             continue
         }
+       
 
         if i == 0 {
             rangeStartTime = tc - ( tc - startTimestamp ) % timeRange
@@ -52,7 +54,9 @@ func queryWorker(dataList []string, startTimestamp int64, tagFilter []int64, agg
 
             ele["timestamp"] = rangeStartTime
             ele["value"] = sum
-            ele["tags"] = tags
+            if hasTagFilter == true {
+                ele["tags"] = tagFilter
+            }
             ret = append(ret, ele) 
             rangeStartTime = tc - ( tc - startTimestamp ) % timeRange
             rangeEndTime = rangeStartTime + timeRange
