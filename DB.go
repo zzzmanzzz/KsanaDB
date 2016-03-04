@@ -69,7 +69,7 @@ func SetData(data string) {
                     continue    
                 }
 
-                
+               //FIXME: should move outside for loop 
                 tagSeq := getTagSeq(hashdata["tags"].(map[string]interface{}), prefix, name) 
                 element := make( map[string]interface{})
                 element["timestamp"] = strconv.FormatInt(timestamp, 10)
