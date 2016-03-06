@@ -8,7 +8,7 @@ import(
 )
 
 
-func queryWorker(dataList []string, startTimestamp int64, tagFilter []int64, aggregateFunction string, sampleUnit string, sampleRange int) ([]map[string]interface{}, error){
+func queryWorker(dataList []string, startTimestamp int64, tagFilter []string, aggregateFunction string, sampleUnit string, sampleRange int) ([]map[string]interface{}, error){
     ret := []map[string]interface{}{}
 
     //check this and next one time

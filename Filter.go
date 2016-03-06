@@ -1,13 +1,11 @@
 package KsanaDB
 import(
-    "fmt"
     "sort"
 )
 
-func filter(tagFilter []int64, tags []string) bool {
+func filter(tagFilter []string, tags []string) bool {
     dataTagLen := len(tags)
-    for _, i := range(tagFilter) {
-         elem := fmt.Sprintf("%d", i)
+    for _, elem := range(tagFilter) {
          pos := sort.SearchStrings(tags, elem)
          if pos == dataTagLen || tags[pos] != elem {
               return false   

@@ -80,6 +80,7 @@ func queryTimeSeries(prefix string, name string, start int64, stop int64) ([]str
 
 
 func setTags(prefix string, metrics string, tags []string) (string) {
+    //TODO: call function
     hashName := prefix + metrics + "\tTagHash"
     listName := prefix + metrics + "\tTagList"
 
@@ -106,7 +107,7 @@ func setTags(prefix string, metrics string, tags []string) (string) {
     return result
 } 
 
-func getTags(metrics string, target string, keyName string) (string) {
+func getTags(prefix string, metrics string, target string, keyName string) (string) {
     listName := prefix + metrics + "\tTagList"
     s := getLuaScript("getTag")
     script := redis.NewScript(0, s)
@@ -117,6 +118,11 @@ func getTags(metrics string, target string, keyName string) (string) {
     }
     return result
 } 
+
+func getSeqByKV(prefix string, metrics string, filterKeyValue []string) ([]string, error) {
+    hashName := prefix + metrics + "\tTagHash"
+    return redis.Strings(client.Do("HMGET", redis.Args{hashName}.AddFlat(filterKeyValue)...))
+}
 
 func Close() {
     client.Close()   

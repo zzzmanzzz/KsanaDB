@@ -61,10 +61,29 @@ func getLuaScript(name string) string {
 
         local function tag(tagSeq)
             local ret = {}; 
+            local data = {}; 
+            local kv = {};
+            local tmp = {};
+            for i,v in ipairs(tagSeq) do
+                kv = split(v, "\t");
+                if tmp[kv[1]] == nil then
+                   tmp[kv[1]] = true;
+                   data[#ret+1] = kv[1];
+                end
+            end
+            ret["tag"] = data
+            return ret;
+        end
+
+        local function allSeq (tagSeq)
+            local ret = {}; 
             local kv = {};
             for i,v in ipairs(tagSeq) do
                 kv = split(v, "\t");
-                ret[#ret+1] = kv[1]; 
+                if ret[kv[1]] == nil then
+                    ret[kv[1]] = {};
+                end
+                table.insert(ret[kv[1]], tostring(i)); 
             end
             return ret;
         end
@@ -83,7 +102,10 @@ func getLuaScript(name string) string {
             ret = tag(tagSeq);
         elseif target == "TagValue" then
             local tmp = all(tagSeq);
-            ret = tmp[tagName];
+            ret[tagName] = tmp[tagName];
+        elseif target == "TagSeq" then
+            local tmp = allSeq(tagSeq);
+            ret[tagName] = tmp[tagName];
         end
         return cjson.encode(ret);
     `

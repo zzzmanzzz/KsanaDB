@@ -94,7 +94,7 @@ func SetData(data string) {
     }
 }
 
-func QueryTimeSeriesData(name string, start int64, stop int64, tags []int64, aggreationFunction string, timeRange int, unit string) ([]map[string]interface{} , error) {
+func QueryTimeSeriesData(name string, start int64, stop int64, tags []string, aggreationFunction string, timeRange int, unit string) ([]map[string]interface{} , error) {
     fmt.Println(time.Now())
     rawData := queryTimeSeries(prefix , name , start , stop )
     data, err := queryWorker(rawData, start, tags, aggreationFunction, unit, timeRange)
@@ -104,7 +104,22 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tags []int64, agg
     return data, err
 }
 
-func GetMetricsTag(name string, target string, keyName string)  {
-    ret := getTags(name, target, keyName)    
-    fmt.Println(ret)
+func GetMetricsTag(name string, target string, keyName string)(map[string][]string)  {
+    var data string
+    switch target {
+        case "All", "TagKey", "TagValue", "TagSeq" :
+            data = getTags(prefix, name, target, keyName)
+      //  default:
+           
+    }
+    var ret map[string][]string
+    json.Unmarshal([]byte(data), &ret)
+    return ret
 }
+
+func GetFilterSeq(name string, filterList []string) ([]string, error){
+      d, err := getSeqByKV(prefix, name, filterList) 
+      return d, err
+}
+
+
