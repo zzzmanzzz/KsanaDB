@@ -8,8 +8,10 @@ import(
 )
 
 
-func queryWorker(dataList []string, startTimestamp int64, tagFilter []string, aggregateFunction string, sampleUnit string, sampleRange int) ([]map[string]interface{}, error){
+func queryWorker(dataList []string, startTimestamp int64, tagFilter []string, groupByTag map[string][]string, aggregateFunction string, sampleUnit string, sampleRange int) ([]map[string]interface{}, error){
     ret := []map[string]interface{}{}
+
+    groupByTag = groupByTag
 
     //check this and next one time
     end := len(dataList)  

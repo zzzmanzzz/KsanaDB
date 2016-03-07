@@ -59,6 +59,7 @@ func SetData(data string) {
             SetTimeSeries(keyname, fmt.Sprint(input), offset)
         } else {
             inputData := make(map[string][]interface{})
+            tagSeq := getTagSeq(hashdata["tags"].(map[string]interface{}), prefix, name) 
             for _, rowdata := range dataPoints.([]interface{}) {
                 data := rowdata.([]interface{})
                 timestamp, errT := (data[0].(json.Number)).Int64()
@@ -69,8 +70,6 @@ func SetData(data string) {
                     continue    
                 }
 
-               //FIXME: should move outside for loop 
-                tagSeq := getTagSeq(hashdata["tags"].(map[string]interface{}), prefix, name) 
                 element := make( map[string]interface{})
                 element["timestamp"] = strconv.FormatInt(timestamp, 10)
                 element["value"] = strconv.FormatFloat(value, 'f', 6, 64)
@@ -94,10 +93,30 @@ func SetData(data string) {
     }
 }
 
-func QueryTimeSeriesData(name string, start int64, stop int64, tags []string, aggreationFunction string, timeRange int, unit string) ([]map[string]interface{} , error) {
+func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []string, groupByTag []string, aggreationFunction string, timeRange int, unit string) ([]map[string]interface{} , error) {
     fmt.Println(time.Now())
+
+    
+    groupBy := map[string][]string{}
+
+    if len(groupByTag) > 0 {
+        for _,t := range groupByTag {
+            tmp := GetMetricsTag(name, "TagSeq", t)
+            groupBy[t] = tmp[t]
+        }
+    }
+
+    fmt.Println(groupBy)
+
+
+    tagFilterSeq, err := GetFilterSeq(name, tagFilter)
+    if err != nil {
+        return nil, err    
+    }
+
+    fmt.Println(tagFilterSeq)
     rawData := queryTimeSeries(prefix , name , start , stop )
-    data, err := queryWorker(rawData, start, tags, aggreationFunction, unit, timeRange)
+    data, err := queryWorker(rawData, start, tagFilterSeq, groupBy, aggreationFunction, unit, timeRange)
     fmt.Println(time.Now())
     fmt.Println("Data length")
     fmt.Println(len(data))
@@ -118,6 +137,10 @@ func GetMetricsTag(name string, target string, keyName string)(map[string][]stri
 }
 
 func GetFilterSeq(name string, filterList []string) ([]string, error){
+      if len(filterList) == 0 {
+          ret := []string{} 
+          return ret, nil   
+      } 
       d, err := getSeqByKV(prefix, name, filterList) 
       return d, err
 }

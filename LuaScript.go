@@ -27,6 +27,10 @@ func getLuaScript(name string) string {
 
     // http://lua-users.org/wiki/SplitJoin
     getTag := `
+        local function compare(a,b)
+            return a<b;
+        end
+
         local function split (str, pat) 
             local t = {};
             local fpat = "(.-)" .. pat;
@@ -68,7 +72,7 @@ func getLuaScript(name string) string {
                 kv = split(v, "\t");
                 if tmp[kv[1]] == nil then
                    tmp[kv[1]] = true;
-                   data[#ret+1] = kv[1];
+                   data[#data+1] = kv[1];
                 end
             end
             ret["tag"] = data
@@ -102,6 +106,7 @@ func getLuaScript(name string) string {
             ret = tag(tagSeq);
         elseif target == "TagValue" then
             local tmp = all(tagSeq);
+            table.sort(tmp[tagName],compare);
             ret[tagName] = tmp[tagName];
         elseif target == "TagSeq" then
             local tmp = allSeq(tagSeq);
