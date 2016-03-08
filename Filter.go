@@ -5,6 +5,7 @@ import(
 
 func filter(tagFilter []string, tags []string) bool {
     dataTagLen := len(tags)
+    sort.Strings(tags)
     for _, elem := range(tagFilter) {
          pos := sort.SearchStrings(tags, elem)
          if pos == dataTagLen || tags[pos] != elem {

@@ -29,6 +29,10 @@ func queryWorker(dataList []string, startTimestamp int64, tagFilter []string, gr
     aF := getFuncMap(aggregateFunction)
 
     hasTagFilter := len(tagFilter) > 0
+    hasGroupBy := len(groupByTag) > 0
+
+    hasGroupBy = hasGroupBy
+
     for i := 0; i< end; i ++ {
         tc, vc, tags, err := ParseJsonHash(dataList[i])
      

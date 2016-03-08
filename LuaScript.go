@@ -13,7 +13,7 @@ func getLuaScript(name string) string {
             seq = -1;
             if isKeyExist == 0 then
                 seq = redis.call('RPUSH', seqArrayName, k);
-                redis.call('HSET', tagHashName, k, seq - 1);
+                redis.call('HSET', tagHashName, k, seq);
             end
             seq = redis.call('HGET', tagHashName, k);
             table.insert(ret, seq);
