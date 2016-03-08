@@ -22,7 +22,6 @@ func groupBy(group map[string][]string, tags []string) ([]string) {
     retLen := len(ret)
     if retLen == len(group){
         sort.Strings(ret)
-        return ret
     } else {
         ret = []string{}    
     } 

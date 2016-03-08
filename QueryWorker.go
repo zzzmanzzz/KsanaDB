@@ -1,19 +1,17 @@
 package KsanaDB
 import(
-//    "fmt"
+    "fmt"
 //     "strconv" 
      "log"
+     "strings"
 //    "time"
 //     "encoding/json"
 )
 
 
 func queryWorker(dataList []string, startTimestamp int64, tagFilter []string, groupByTag map[string][]string, aggregateFunction string, sampleUnit string, sampleRange int) ([]map[string]interface{}, error){
+    
     ret := []map[string]interface{}{}
-
-    groupByTag = groupByTag
-
-    //check this and next one time
     end := len(dataList)  
 
     timeRange, err := getTimeRange(startTimestamp, sampleRange, sampleUnit )
@@ -31,7 +29,10 @@ func queryWorker(dataList []string, startTimestamp int64, tagFilter []string, gr
     hasTagFilter := len(tagFilter) > 0
     hasGroupBy := len(groupByTag) > 0
 
-    hasGroupBy = hasGroupBy
+    var groupByAggreateIndex map[string][]int
+    if hasGroupBy == true  {
+         groupByAggreateIndex = map[string][]int{}
+    }
 
     for i := 0; i< end; i ++ {
         tc, vc, tags, err := ParseJsonHash(dataList[i])
@@ -44,6 +45,17 @@ func queryWorker(dataList []string, startTimestamp int64, tagFilter []string, gr
         
         if hasTagFilter && filter(tagFilter, tags) == false {
             continue
+        }
+
+        if hasGroupBy == true {
+            //unique and sort hit group tags and filter tags
+             gkey := groupBy(groupByTag, tags)
+             if len(gkey) > 0 {
+                 key := strings.Join(gkey,"\t")
+                 groupByAggreateIndex[key] = append(groupByAggreateIndex[key], i)
+             } else {
+                 continue    
+             }
         }
        
 
@@ -75,6 +87,7 @@ func queryWorker(dataList []string, startTimestamp int64, tagFilter []string, gr
             aggResult = aF(aggResult, vc)
         }
     } 
+    fmt.Println(groupByAggreateIndex)
     return ret, nil
 }
 
