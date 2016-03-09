@@ -118,3 +118,4 @@ func getTagSeq (tags map[string]interface{}, prefix string, name string) ([]inte
     jarray,_ := ParseJson(jTagSeq)
     return jarray
 }
+
