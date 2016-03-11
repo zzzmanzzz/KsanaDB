@@ -9,10 +9,8 @@ import (
 ) 
 
 func getDateStartSec(timestamp int64) ( int64, int64 ) { 
-        tm := time.Unix(timestamp/1000, 0) 
-        st := time.Date(tm.Year(), tm.Month(), tm.Day(), 0, 0, 0, 0, time.Local)
-        dateZeroOclock := st.UTC().Unix() * 1000 
-        return dateZeroOclock, tm.UTC().Unix() * 1000 - dateZeroOclock 
+        offset := timestamp % 86400000
+        return timestamp - offset, offset
 } 
 
 func relativeToAbsoluteTime(tNow time.Time, diff int, unit string) (int64, error) {
