@@ -14,31 +14,30 @@ func Connect() {
 }
 
 func SetData(data string) {
-    InputArray, err := ParseJson(data)
+    InputArray, err := ParseDataJson(data)
   
     if (err != nil) {
         return    
     }
 
-    for _, data := range InputArray {
-        hashdata := data.(map[string]interface{})
+    for _, hashdata := range InputArray {
         name := ""
-        dataPoints := hashdata["datapoints"]
+        dataPoints := hashdata.Datapoints
 
-        if hashdata["name"] == nil {
+        if hashdata.Name == "" {
             continue    
         } else {
-            name = hashdata["name"].(string) 
+            name = hashdata.Name 
         }
 
         if dataPoints == nil {
-            value, _ := (hashdata["value"].(json.Number)).Float64()
+            value, _ := hashdata.Value.Float64()
 
-            if hashdata["timestamp"] == nil {
+            if hashdata.Timestamp == nil {
                 //log.Fatalf("Connect failed: %s\n", err.Error()) 
                 continue    
             }
-            timestamp, err := (hashdata["timestamp"].(json.Number)).Int64()
+            timestamp, err := hashdata.Timestamp.Int64()
  
             if err != nil {
                 continue
@@ -47,7 +46,7 @@ func SetData(data string) {
 
             element := make( map[string]interface{})
             keyname, offset := generateTimeSeriesData(prefix, name , timestamp)
-            tagSeq := getTagSeq(hashdata["tags"].(map[string]interface{}), prefix, name) 
+            tagSeq := getTagSeq(hashdata.Tags, prefix, name) 
 
  
             element["timestamp"] = strconv.FormatInt(timestamp, 10)
@@ -59,11 +58,10 @@ func SetData(data string) {
             SetTimeSeries(keyname, fmt.Sprint(input), offset)
         } else {
             inputData := make(map[string][]interface{})
-            tagSeq := getTagSeq(hashdata["tags"].(map[string]interface{}), prefix, name) 
-            for _, rowdata := range dataPoints.([]interface{}) {
-                data := rowdata.([]interface{})
-                timestamp, errT := (data[0].(json.Number)).Int64()
-                value, errV := (data[1].(json.Number)).Float64()
+            tagSeq := getTagSeq(hashdata.Tags, prefix, name) 
+            for _, data := range dataPoints {
+                timestamp, errT := data[0].Int64()
+                value, errV := data[1].Float64()
 
                 if errT != nil || errV != nil {
                     //log.Fatalf("Connect failed: %s\n", err.Error()) 

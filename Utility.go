@@ -5,7 +5,7 @@ import (
      "time" 
      "strconv"
      "errors"
-     "encoding/json"
+//     "encoding/json"
 ) 
 
 func getDateStartSec(timestamp int64) ( int64, int64 ) { 
@@ -105,11 +105,13 @@ func getTagSeq (tags map[string]interface{}, prefix string, name string) ([]inte
     if tags != nil {
         kvArray := []string{}
         for k, v := range tags {
+            data := v
             switch v.(type) {
-                case json.Number :
-                    v = string(v.(json.Number))
+                case float64 :
+                    data = fmt.Sprintf("%f",v)
             }
-            kvArray = append(kvArray, fmt.Sprintf("%s\t%s",k,v.(string))) 
+
+            kvArray = append(kvArray, fmt.Sprintf("%s\t%s",k,data.(string))) 
         }
         jTagSeq = setTags(prefix, name, kvArray)
     }

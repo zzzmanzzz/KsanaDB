@@ -7,14 +7,25 @@ import (
     "strconv"
 )
 
+func ParseDataJson(data string) ([]DataPoint, error) {
+    var DataPoints []DataPoint   
+    b := []byte(data)  
+    err := json.Unmarshal(b, &DataPoints)
+    if err != nil {                                                  
+            log.Fatalf("Connect failed: %s\n", err.Error())              
+            return nil, err             
+    }
+    return DataPoints, nil
+}
+
 func ParseJson(data string) ([]interface{}, error) {
     js, err := sjson.NewJson([]byte(data))
         if err != nil {                                                  
             log.Fatalf("Connect failed: %s\n", err.Error())              
-            return nil, err             
+                return nil, err             
         }
     InputArray,_ := js.Array()
-    return InputArray, nil
+        return InputArray, nil
 }
 
 func ParseJsonHash(data string) (int64, float64, []string, error) {
