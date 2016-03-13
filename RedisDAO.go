@@ -6,7 +6,7 @@ import (
     "fmt"
 )
 
-var MAX_POOL_SIZE = 20
+var MAX_POOL_SIZE = 400
 var redisPoll chan redis.Conn
 var client redis.Conn
 
@@ -125,5 +125,5 @@ func getSeqByKV(prefix string, metrics string, filterKeyValue []string) ([]strin
 }
 
 func Close() {
-    client.Close()   
+    redisPoll <- client 
 }
