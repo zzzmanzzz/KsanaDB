@@ -7,37 +7,6 @@ import (
     "time"
 )
 
-var MAX_POOL_SIZE = 20
-var redisPoll chan redis.Conn
-
-func putRedis(conn redis.Conn) {
-    if redisPoll == nil {
-        redisPoll = make(chan redis.Conn, MAX_POOL_SIZE)
-    }
-    if len(redisPoll) >= MAX_POOL_SIZE {
-        conn.Close()
-            return
-    }
-    redisPoll <- conn
-}
-/*
-func InitRedis(network, address string) redis.Conn {
-    fmt.Println(len(redisPoll))
-    if len(redisPoll) == 0 {
-        redisPoll = make(chan redis.Conn, MAX_POOL_SIZE)
-            go func() {
-                for i := 0; i < MAX_POOL_SIZE/2; i++ {
-                    c, err := redis.Dial(network, address)
-                        if err != nil {
-                            panic(err)
-                        }
-                    putRedis(c)
-                }
-            } ()
-    }
-    return <-redisPoll
-}
-*/
 var pool *redis.Pool 
 
 func InitRedis(network, address string)  {
@@ -59,17 +28,6 @@ func InitRedis(network, address string)  {
     } 
 }  
 
-
-func GetLink(host string, port uint) {
-    host = host
-    port = port
-   // client := pool.Get()
-}
-/*
-func GetLink(host string, port uint) {
-     client = InitRedis("tcp",host+":"+fmt.Sprint(port))
-}
-*/
 func BulkSetTimeSeries(metrics string, input []interface{}) (int, error) {
   //  log.Printf("metrics : %s\n", metrics)
   //  log.Println(input)

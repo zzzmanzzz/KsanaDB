@@ -10,7 +10,7 @@ import (
 var prefix = "KSANADBv1\t"
 
 func Connect() {
-   GetLink("127.0.0.1", 6379) 
+   InitRedis("tcp", "127.0.0.1:6379") 
 }
 
 func SetData(data string) {
