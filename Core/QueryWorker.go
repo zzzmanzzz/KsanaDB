@@ -29,6 +29,7 @@ func concurrentPart(key string, startTimestamp int64, timeRange int64, aggregate
     rangeStartTime := int64(0)
     rangeEndTime := int64(0)
     ret := map[string][]map[string]interface{}{}
+    localResult := []map[string]interface{}{}
 
     aF := getFuncMap(aggregateFunction)
 
@@ -40,30 +41,9 @@ func concurrentPart(key string, startTimestamp int64, timeRange int64, aggregate
         tc := d["timestamp"].(int64)
         vc := d["value"].(float64)
 
-        if rangeStartTime == 0 {
-            rangeStartTime = tc - ( tc - startTimestamp ) % timeRange
-            rangeEndTime = rangeStartTime + timeRange
-            //fmt.Printf("###\nvc   \t%f\nstart\t%d\ntc   \t%d\nend  \t%d\ntime Range %d\nstartTimestamp  %d\n", 
-            //vc, rangeStartTime, tc, rangeEndTime, timeRange,startTimestamp)
-        } 
-            //fmt.Printf("###\nvc   \t%f\nstart\t%d\ntc   \t%d\nend  \t%d\ntime Range %d\nstartTimestamp  %d\n", 
-            //vc, rangeStartTime, tc, rangeEndTime, timeRange,startTimestamp)
-
-        if tc > rangeEndTime {
-            ele := make(map[string]interface{})
-            ele["timestamp"] = rangeStartTime
-            ele["value"] = aggResult
-            ret[key] = append(ret[key], ele) 
-            rangeStartTime = tc - ( tc - startTimestamp ) % timeRange
-            rangeEndTime = rangeStartTime + timeRange
-            aggResult = aF(0,vc) 
-        //fmt.Printf("@@@\nvc   \t%f\nstart\t%d\ntc   \t%d\nend  \t%d\ntime Range %d\nstartTimestamp  %d\n", 
-        //    vc, rangeStartTime, tc, rangeEndTime, timeRange,startTimestamp)
-        } else {
-            aggResult = aF(aggResult, vc)
-        }
-
+        rangeStartTime, rangeEndTime, aggResult, localResult = rangeAggreator(rangeStartTime, rangeEndTime, aggResult, tc, vc, aF, startTimestamp, timeRange, localResult)
     }
+    ret[key] = localResult
     out <- ret
 }
 
@@ -158,35 +138,29 @@ func nonConcurrentQuery(dataList []string, startTimestamp int64, tagFilter []str
         if hasTagFilter && filter(tagFilter, tags) == false {
             continue
         }
-
-        if rangeStartTime == 0 {
-            rangeStartTime = tc - ( tc - startTimestamp ) % timeRange
-            rangeEndTime = rangeStartTime + timeRange
-//        fmt.Printf("###\nvc   \t%f\nstart\t%d\ntc   \t%d\nend  \t%d\ntime Range %d\nstartTimestamp  %d\n", 
-//            vc, rangeStartTime, tc, rangeEndTime, timeRange,startTimestamp)
-        } 
- 
-//        fmt.Printf("###\nvc   \t%f\nstart\t%d\ntc   \t%d\nend  \t%d\ntime Range %d\nstartTimestamp  %d\n", 
-//            vc, rangeStartTime, tc, rangeEndTime, timeRange,startTimestamp)
-
-        if tc > rangeEndTime {
-            ele := make(map[string]interface{})
-
-            ele["timestamp"] = rangeStartTime
-            ele["value"] = aggResult
-            if hasTagFilter == true {
-                ele["tags"] = tagFilter
-            }
-            ret = append(ret, ele) 
-            rangeStartTime = tc - ( tc - startTimestamp ) % timeRange
-            rangeEndTime = rangeStartTime + timeRange
-            aggResult = aF(0,vc) 
-//        fmt.Printf("@@@\nvc   \t%f\nstart\t%d\ntc   \t%d\nend  \t%d\ntime Range %d\nstartTimestamp  %d\n", 
-//            vc, rangeStartTime, tc, rangeEndTime, timeRange,startTimestamp)
-        } else {
-            aggResult = aF(aggResult, vc)
-        }
+        rangeStartTime, rangeEndTime, aggResult, ret = rangeAggreator(rangeStartTime, rangeEndTime, aggResult, tc, vc, aF, startTimestamp, timeRange, ret)
     } 
     return ret, nil
 }
 
+func rangeAggreator(rangeStartTime int64, rangeEndTime int64, aggResult float64, currentElementTime int64, currentElementValue float64, aF aggFunc, startTimestamp int64, timeRange int64, ret []map[string]interface{}) (int64, int64, float64, []map[string]interface{}){
+        
+        if rangeStartTime == 0 {
+            rangeStartTime = currentElementTime - ( currentElementTime - startTimestamp ) % timeRange
+            rangeEndTime = rangeStartTime + timeRange
+        } 
+ 
+        if currentElementTime > rangeEndTime {
+            ele := make(map[string]interface{})
+
+            ele["timestamp"] = rangeStartTime
+            ele["value"] = aggResult
+            ret = append(ret, ele) 
+            rangeStartTime = currentElementTime - ( currentElementTime - startTimestamp ) % timeRange
+            rangeEndTime = rangeStartTime + timeRange
+            aggResult = aF(0,currentElementValue) 
+        } else {
+            aggResult = aF(aggResult, currentElementValue)
+        }
+        return rangeStartTime, rangeEndTime, aggResult, ret
+}

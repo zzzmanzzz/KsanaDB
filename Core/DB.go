@@ -112,14 +112,8 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
         return nil, err    
     }
 
-    fmt.Println(tagFilterSeq)
     rawData := queryTimeSeries(prefix , name , start , stop )
     data, err := queryWorker(rawData, start, tagFilterSeq, groupBy, aggreationFunction, unit, timeRange)
-    fmt.Println(time.Now())
-    fmt.Println("Raw Data length")
-    fmt.Println(len(rawData))
-    fmt.Println("Data length")
-    fmt.Println(len(data))
     return data, err
 }
 
