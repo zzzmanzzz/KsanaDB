@@ -11,10 +11,10 @@ var fnRegistry = map[string] interface{} {
                                                         return max
                                                     }
                                                   },
-    "min": func(max float64, val float64) float64 { if max > val { 
+    "min": func(min float64, val float64) float64 { if min > val { 
                                                         return val 
                                                     } else { 
-                                                        return max
+                                                        return min
                                                     }
                                                   },
 }
