@@ -7,6 +7,17 @@ import (
     "strconv"
 )
 
+func ParseQueryJson(data string) (*Query, error) {
+    var q *Query
+    b := []byte(data)  
+    err := json.Unmarshal(b, &q)
+    if err != nil {                                                  
+            log.Fatalf("Connect failed: %s\n", err.Error())              
+            return nil, err             
+    }
+    return q, nil
+}
+
 func ParseDataJson(data string) ([]DataPoint, error) {
     var DataPoints []DataPoint   
     b := []byte(data)  
