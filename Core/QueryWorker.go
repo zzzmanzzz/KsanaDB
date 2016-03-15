@@ -8,20 +8,17 @@ import(
 //     "encoding/json"
 )
 
-func queryWorker(dataList []string, startTimestamp int64, tagFilter []string, groupByTag map[string][]string, aggregateFunction string, sampleUnit string, sampleRange int) ([]map[string]interface{}, error){
+func queryWorker(dataList []string, startTimestamp int64, tagFilter []string, groupByTag map[string][]string, aggregateFunction string, sampleUnit string, sampleRange int) (map[string][]map[string]interface{}, error){
 
-    ret := []map[string]interface{}{}
+    var ret map[string][]map[string]interface{}
     hasGroupBy := len(groupByTag) > 0
-
+    var err error
     if hasGroupBy == false {
-        ret, err := nonConcurrentQuery(dataList, startTimestamp, tagFilter, aggregateFunction, sampleUnit, sampleRange)
-        return ret, err
+        ret, err = nonConcurrentQuery(dataList, startTimestamp, tagFilter, aggregateFunction, sampleUnit, sampleRange)
     } else {
-        if hasGroupBy == true  {
-            concurrentQuery(dataList, startTimestamp, tagFilter, groupByTag, aggregateFunction, sampleUnit, sampleRange)
-        }
+        ret, err = concurrentQuery(dataList, startTimestamp, tagFilter, groupByTag, aggregateFunction, sampleUnit, sampleRange)
     }
-    return ret, nil
+    return ret, err
 }
 
 func concurrentPart(key string, startTimestamp int64, timeRange int64, aggregateFunction string, in chan map[string]interface{}, out chan map[string][]map[string]interface{}) {
@@ -47,8 +44,8 @@ func concurrentPart(key string, startTimestamp int64, timeRange int64, aggregate
     out <- ret
 }
 
-func concurrentQuery(dataList []string, startTimestamp int64, tagFilter []string, groupByTag map[string][]string, aggregateFunction string, sampleUnit string, sampleRange int) ([]map[string]interface{}, error){
-    ret := []map[string]interface{}{}
+func concurrentQuery(dataList []string, startTimestamp int64, tagFilter []string, groupByTag map[string][]string, aggregateFunction string, sampleUnit string, sampleRange int) (map[string][]map[string]interface{}, error){
+    ret := map[string][]map[string]interface{}{}
     end := len(dataList)  
 
     timeRange, err := getTimeRange(startTimestamp, sampleRange, sampleUnit )
@@ -108,9 +105,10 @@ func concurrentQuery(dataList []string, startTimestamp int64, tagFilter []string
     return ret, nil
 }
 
-func nonConcurrentQuery(dataList []string, startTimestamp int64, tagFilter []string, aggregateFunction string, sampleUnit string, sampleRange int) ([]map[string]interface{}, error){
+func nonConcurrentQuery(dataList []string, startTimestamp int64, tagFilter []string, aggregateFunction string, sampleUnit string, sampleRange int) (map[string][]map[string]interface{}, error){
     
     ret := []map[string]interface{}{}
+    result := map[string][]map[string]interface{}{}
     end := len(dataList)  
 
     timeRange, err := getTimeRange(startTimestamp, sampleRange, sampleUnit )
@@ -140,7 +138,9 @@ func nonConcurrentQuery(dataList []string, startTimestamp int64, tagFilter []str
         }
         rangeStartTime, rangeEndTime, aggResult, ret = rangeAggreator(rangeStartTime, rangeEndTime, aggResult, tc, vc, aF, startTimestamp, timeRange, ret)
     } 
-    return ret, nil
+
+    result["single"] = ret
+    return result, nil
 }
 
 func rangeAggreator(rangeStartTime int64, rangeEndTime int64, aggResult float64, currentElementTime int64, currentElementValue float64, aF aggFunc, startTimestamp int64, timeRange int64, ret []map[string]interface{}) (int64, int64, float64, []map[string]interface{}){

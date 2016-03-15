@@ -91,7 +91,7 @@ func SetData(data string) {
     }
 }
 
-func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []string, groupByTag []string, aggreationFunction string, timeRange int, unit string) ([]map[string]interface{} , error) {
+func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []string, groupByTag []string, aggreationFunction string, timeRange int, unit string) (map[string][]map[string]interface{} , error) {
     fmt.Println(time.Now())
 
     
