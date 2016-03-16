@@ -2,7 +2,7 @@ package KsanaDB
 import (
     "fmt"
     "time"
-//    "log"
+    "log"
     "encoding/json"
     "strconv"
 )
@@ -13,11 +13,12 @@ func Connect() {
    InitRedis("tcp", "127.0.0.1:6379") 
 }
 
-func SetData(data string) {
+func SetData(data string) *error {
     InputArray, err := ParseDataJson(data)
   
     if (err != nil) {
-        return    
+        log.Println(err.Error())
+        return &err
     }
 
     for _, hashdata := range InputArray {
@@ -34,12 +35,13 @@ func SetData(data string) {
             value, _ := hashdata.Value.Float64()
 
             if hashdata.Timestamp == nil {
-                //log.Fatalf("Connect failed: %s\n", err.Error()) 
+                log.Println(err.Error())
                 continue    
             }
             timestamp, err := hashdata.Timestamp.Int64()
  
             if err != nil {
+                log.Println(err.Error())
                 continue
             }
 
@@ -64,7 +66,7 @@ func SetData(data string) {
                 value, errV := data[1].Float64()
 
                 if errT != nil || errV != nil {
-                    //log.Fatalf("Connect failed: %s\n", err.Error()) 
+                    log.Println(err.Error())
                     continue    
                 }
 
@@ -82,13 +84,15 @@ func SetData(data string) {
             for k := range inputData {
                 _, err := BulkSetTimeSeries(k, inputData[k])
                 if err != nil {
-                    //log.Fatalf("Connect failed: %s\n", err.Error()) 
+                    log.Println(err.Error())
                     continue    
                 }
             }
+
             //fmt.Println(inputData)
         }
     }
+    return nil
 }
 
 func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []string, groupByTag []string, aggreationFunction string, timeRange int, unit string) (map[string][]map[string]interface{} , error) {

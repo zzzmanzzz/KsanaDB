@@ -77,7 +77,6 @@ func concurrentQuery(dataList []string, startTimestamp int64, tagFilter []string
             if groupByInputChan[key] == nil {
                 groupByInputChan[key] = make(chan map[string]interface{}, 1000) 
                 go concurrentPart(key, startTimestamp, timeRange, aggregateFunction, groupByInputChan[key], out)
-
             }
             ele := map[string]interface{}{}
             ele["value"] = vc

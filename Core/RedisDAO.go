@@ -16,15 +16,20 @@ func InitRedis(network, address string)  {
         IdleTimeout: 240 * time.Second,                          
         Dial: func() (redis.Conn, error) {                                                                        
             c, err := redis.Dial(network, address)                                                                   
-                if err != nil {                                                                                   
+                if err != nil { 
+                    log.Fatalf(err.Error())
                     return nil, err                                                                               
                 }                                                                                                 
                 return c, err                                                                                         
         },                                                                                                        
         TestOnBorrow: func(c redis.Conn, t time.Time) error { 
                   _, err := c.Do("PING") 
+                  if err != nil { 
+                      log.Fatalf(err.Error())
                       return err 
-              },                                                                                                           
+                  }
+                  return nil 
+        },                                                                                                           
     } 
 }  
 
