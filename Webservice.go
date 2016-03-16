@@ -30,15 +30,24 @@ func main() {
 
       m.Post("/api/v1/query", func(w http.ResponseWriter, r *http.Request) {
            q, err := KsanaDB.ParseQueryJson(r.FormValue("data"))
-           ret, err := KsanaDB.QueryData(q)
 
+           if err != nil {
+               w.WriteHeader(400)
+               return
+           }
+
+           ret, err := KsanaDB.QueryData(q)
            if err == nil {
-               fmt.Println(ret)
+               for k, v := range(ret) {
+               fmt.Print(k)
+               fmt.Println(v)
+               }
                w.WriteHeader(http.StatusOK)
            } else {
                fmt.Println(err)
                w.WriteHeader(400)
            }
+
       })
 
       m.RunOnAddr(fmt.Sprintf(":%d", 13000 ))//+ time.Now().Unix()%100))
