@@ -10,7 +10,7 @@ func ParseQueryJson(data string) (*Query, error) {
     var q *Query
     b := []byte(data)  
     err := json.Unmarshal(b, &q)
-    if err != nil {                                                  
+    if err != nil { 
         return nil, err             
     }
     return q, nil
@@ -26,6 +26,7 @@ func ParseDataJson(data string) ([]DataPoint, error) {
     return DataPoints, nil
 }
 
+//TODO refactor
 func ParseJson(data string) ([]interface{}, error) {
     js, err := sjson.NewJson([]byte(data))
         if err != nil {                                                  

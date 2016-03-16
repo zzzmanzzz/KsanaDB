@@ -30,10 +30,15 @@ func main() {
 
       m.Post("/api/v1/query", func(w http.ResponseWriter, r *http.Request) {
            q, err := KsanaDB.ParseQueryJson(r.FormValue("data"))
-           fmt.Println(q)
+           ret, err := KsanaDB.QueryData(q)
+
+
            if err == nil {
+               ret = ret
+               //fmt.Println(ret)
                w.WriteHeader(http.StatusOK)
            } else {
+               fmt.Println(err)
                w.WriteHeader(400)
            }
       })

@@ -11,7 +11,7 @@ import (
 func getDateStartSec(timestamp int64) ( int64, int64 ) { 
         offset := timestamp % 86400000
         return timestamp - offset, offset
-} 
+}
 
 func relativeToAbsoluteTime(tNow time.Time, diff int, unit string) (int64, error) {
     var tResult time.Time 

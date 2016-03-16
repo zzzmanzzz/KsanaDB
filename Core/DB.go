@@ -1,17 +1,14 @@
 package KsanaDB
 import (
     "fmt"
-    "time"
     "log"
     "encoding/json"
     "strconv"
+    "time"
+    "errors"
 )
 
 var prefix = "KSANADBv1\t"
-
-func Connect() {
-   InitRedis("tcp", "127.0.0.1:6379") 
-}
 
 func SetData(data string) *error {
     InputArray, err := ParseDataJson(data)
@@ -98,9 +95,74 @@ func SetData(data string) *error {
     return nil
 }
 
-func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []string, groupByTag []string, aggreationFunction string, timeRange int, unit string) (map[string][]map[string]interface{} , error) {
-    fmt.Println(time.Now())
+func QueryData(q *Query) (map[string][]map[string]interface{} , error) {
+    var start int64 
+    var end int64 
+    var err error
 
+    if q.Metric.Name == nil {
+        return nil, errors.New("Need set Metric name")    
+    }
+
+    tNow := time.Now()
+
+    if q.StartAbsolute == nil {
+        if q.StartRelative == nil {
+            return nil, errors.New("Need set absolute start time")    
+        } else if q.StartRelative.Unit == nil || q.StartRelative.Value == nil {
+            return nil, errors.New("Need set relative start time")    
+        } else {
+           rstart, err := q.StartRelative.Value.Int64()
+           if err != nil {
+               return nil, err 
+           }
+           start, err = relativeToAbsoluteTime(tNow, int(rstart), *q.StartRelative.Unit)
+           if err != nil {
+               return nil, err 
+           }
+        }
+    } else {
+        start, err = q.StartAbsolute.Int64()
+        if err != nil {
+            return nil, err 
+        }
+    }
+
+    if q.EndAbsolute == nil {
+        if q.EndRelative == nil {
+            return nil, errors.New("Need set absolute end time")    
+        } else if q.EndRelative.Unit == nil || q.EndRelative.Value == nil {
+            return nil, errors.New("Need set relative end time")    
+        } else {
+           rend, err := q.EndRelative.Value.Int64() 
+           if err != nil {
+               return nil, err 
+           }
+           end, err = relativeToAbsoluteTime(tNow, int(rend), *q.EndRelative.Unit)
+           if err != nil {
+               return nil, err 
+           }
+        }
+    } else {
+        end, err = q.EndAbsolute.Int64()
+        if err != nil {
+            return nil, err 
+        }
+    }
+    tagFilter := []string {}
+    groupByTag := q.Metric.GroupBy
+    aggreationFunction := q.Metric.Aggregator.Name
+    unit := *q.Metric.Aggregator.Sampling.Unit
+    timeRange, err := q.Metric.Aggregator.Sampling.Value.Int64()
+    if err != nil {
+        return nil, err 
+    }
+
+    ret, err :=  QueryTimeSeriesData(*q.Metric.Name, start, end, tagFilter, groupByTag, aggreationFunction, int(timeRange), unit)
+    return ret, err
+}
+
+func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []string, groupByTag []string, aggreationFunction string, timeRange int, unit string) (map[string][]map[string]interface{} , error) {
     
     groupBy := map[string][]string{}
 
@@ -111,15 +173,15 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
         }
     }
 
-    fmt.Println(groupBy)
-
-
     tagFilterSeq, err := GetFilterSeq(name, tagFilter)
     if err != nil {
         return nil, err    
     }
 
     rawData := queryTimeSeries(prefix , name , start , stop )
+    if len(rawData) == 0 {
+        return map[string][]map[string]interface{}{}, nil    
+    }
     data, err := queryWorker(rawData, start, tagFilterSeq, groupBy, aggreationFunction, unit, timeRange)
     return data, err
 }

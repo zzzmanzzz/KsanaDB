@@ -14,12 +14,12 @@ type DataPoint struct {
 
 type RelativeTime struct {
     Value *json.Number
-    Unit string
+    Unit *string
 }
 
 type Sample struct {
     Value *json.Number
-    Unit string
+    Unit *string
 }
 
 type AggregatorType struct {
@@ -27,9 +27,9 @@ type AggregatorType struct {
     Sampling Sample
 }
 
-type Metric struct {
-   Tags map[string] []string
-   Name string
+type MetricType struct {
+   Tags map[string]string
+   Name *string
    Limit *json.Number
    GroupBy []string
    Aggregator AggregatorType
@@ -37,9 +37,9 @@ type Metric struct {
 
 type Query struct {
     StartAbsolute *json.Number 
-    EndAbsoluate *json.Number
-    StartRelative RelativeTime
-    EndRelative RelativeTime
+    EndAbsolute *json.Number
+    StartRelative *RelativeTime
+    EndRelative *RelativeTime
     TimeZone string
-    Metrics []Metric
+    Metric MetricType
 }
