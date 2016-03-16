@@ -11,7 +11,7 @@ func ParseQueryJson(data string) (*Query, error) {
     b := []byte(data)  
     err := json.Unmarshal(b, &q)
     if err != nil {                                                  
-            return nil, err             
+        return nil, err             
     }
     return q, nil
 }
@@ -21,7 +21,7 @@ func ParseDataJson(data string) ([]DataPoint, error) {
     b := []byte(data)  
     err := json.Unmarshal(b, &DataPoints)
     if err != nil {                                                  
-            return nil, err             
+        return nil, err             
     }
     return DataPoints, nil
 }

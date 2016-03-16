@@ -34,17 +34,12 @@ func InitRedis(network, address string)  {
 }  
 
 func BulkSetTimeSeries(metrics string, input []interface{}) (int, error) {
-  //  log.Printf("metrics : %s\n", metrics)
-  //  log.Println(input)
     client := pool.Get()
     defer client.Close()
     return redis.Int(client.Do("ZADD", redis.Args{metrics}.AddFlat(input)...))
 }
 
 func SetTimeSeries(metrics string, value string, time int64) (int, error) {
-  //  log.Printf("metrics : %s, value : %s, time offset : %d\n", metrics, value, time)
-  //  log.Println(value)
-
     client := pool.Get()
     defer client.Close()
     input := []interface{}{}
@@ -54,12 +49,10 @@ func SetTimeSeries(metrics string, value string, time int64) (int, error) {
 }
 
 func queryTimeSeries(prefix string, name string, start int64, stop int64) ([]string) {
-    //options := ""//"withscores"
     client := pool.Get()
     defer client.Close()
     cmds := getTimeseriesQueryCmd(prefix, name, start, stop)
     for _, cmd := range cmds {
-    //.AddFlat(options)
         client.Send("ZRANGEBYSCORE", redis.Args{cmd["keyName"], cmd["from"], cmd["to"]}...)
     }
     client.Flush()
@@ -83,8 +76,6 @@ func setTags(prefix string, metrics string, tags []string) (string) {
     hashName := prefix + metrics + "\tTagHash"
     listName := prefix + metrics + "\tTagList"
 
-    // args = eval key + eval args
-    //here is keys 
     args := []string{}
 
     args = append(args, tags...)
@@ -128,6 +119,5 @@ func getSeqByKV(prefix string, metrics string, filterKeyValue []string) ([]strin
 }
 
 func Close() {
-    //client.Close()
-    //redisPoll <- client 
+    pool.Close()
 }

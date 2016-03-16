@@ -28,9 +28,15 @@ func main() {
            }
       })
 
-
-
-
+      m.Post("/api/v1/query", func(w http.ResponseWriter, r *http.Request) {
+           q, err := KsanaDB.ParseQueryJson(r.FormValue("data"))
+           fmt.Println(q)
+           if err == nil {
+               w.WriteHeader(http.StatusOK)
+           } else {
+               w.WriteHeader(400)
+           }
+      })
 
       m.RunOnAddr(fmt.Sprintf(":%d", 13000 ))//+ time.Now().Unix()%100))
 }

@@ -31,6 +31,7 @@ func SetData(data string) *error {
             name = hashdata.Name 
         }
 
+
         if dataPoints == nil {
             value, _ := hashdata.Value.Float64()
 
@@ -61,6 +62,7 @@ func SetData(data string) *error {
         } else {
             inputData := make(map[string][]interface{})
             tagSeq := getTagSeq(hashdata.Tags, prefix, name) 
+
             for _, data := range dataPoints {
                 timestamp, errT := data[0].Int64()
                 value, errV := data[1].Float64()
@@ -81,6 +83,7 @@ func SetData(data string) *error {
                 inputData[keyname] = append(inputData[keyname], offset)
                 inputData[keyname] = append(inputData[keyname], input)
             }
+
             for k := range inputData {
                 _, err := BulkSetTimeSeries(k, inputData[k])
                 if err != nil {
