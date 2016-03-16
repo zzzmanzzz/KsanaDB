@@ -1,6 +1,5 @@
 package KsanaDB
 import(
-    "fmt"
 //     "strconv" 
      "log"
      "strings"
@@ -94,7 +93,11 @@ func concurrentQuery(dataList []string, startTimestamp int64, tagFilter []string
     counter := 0
     for d := range(out) {
         counter++
-        fmt.Println(d)
+        
+        for k, v := range(d) {
+            ret[k] = v
+        }
+        
         if counter == len(groupByInputChan) {
             close(out)
             break

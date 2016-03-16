@@ -32,10 +32,8 @@ func main() {
            q, err := KsanaDB.ParseQueryJson(r.FormValue("data"))
            ret, err := KsanaDB.QueryData(q)
 
-
            if err == nil {
-               ret = ret
-               //fmt.Println(ret)
+               fmt.Println(ret)
                w.WriteHeader(http.StatusOK)
            } else {
                fmt.Println(err)
