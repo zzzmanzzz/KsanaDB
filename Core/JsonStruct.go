@@ -43,3 +43,8 @@ type Query struct {
     TimeZone string
     Metric MetricType
 }
+
+type AllTagSeqType struct {
+    Val map[string]string
+    Seq map[string][]string
+}

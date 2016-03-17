@@ -165,13 +165,16 @@ func QueryData(q *Query) (map[string][]map[string]interface{} , error) {
 func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []string, groupByTag []string, aggreationFunction string, timeRange int, unit string) (map[string][]map[string]interface{} , error) {
     
     groupBy := map[string][]string{}
+    var reverseHash map[string]string
 
     if len(groupByTag) > 0 {
         for _,t := range groupByTag {
-            tmp := GetMetricsTag(name, "TagSeq", t)
-            groupBy[t] = tmp[t]
+            tmp := GetMetricsTagSeq(name, t)
+            groupBy[t] = tmp.Seq[t]
+            reverseHash = tmp.Val
         }
     }
+    fmt.Println(reverseHash)
 
     tagFilterSeq, err := GetFilterSeq(name, tagFilter)
     if err != nil {
@@ -186,15 +189,22 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
     return data, err
 }
 
-func GetMetricsTag(name string, target string, keyName string)(map[string][]string)  {
+func GetMetricsTag(name string, target string, keyName string) (map[string][]string)  {
     var data string
     switch target {
-        case "All", "TagKey", "TagValue", "TagSeq" :
+        case "All", "TagKey", "TagValue" :
             data = getTags(prefix, name, target, keyName)
       //  default:
            
     }
     var ret map[string][]string
+    json.Unmarshal([]byte(data), &ret)
+    return ret
+}
+
+func GetMetricsTagSeq(name string, keyName string) (AllTagSeqType)  {
+    data := getTags(prefix, name, "TagSeq", keyName)
+    var ret AllTagSeqType //map[string]map[string][]string
     json.Unmarshal([]byte(data), &ret)
     return ret
 }
