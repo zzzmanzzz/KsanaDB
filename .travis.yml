@@ -18,4 +18,4 @@ install:
   - export PATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace/bin:$PATH"
 
 script:
-    - $GOPATH/bin/goveralls -repotoken $COVERALLS_TOKEN
+    - $PATH/bin/goveralls -repotoken $COVERALLS_TOKEN
