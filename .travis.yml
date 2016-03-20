@@ -1,21 +1,19 @@
 language: go
 go:
-  - 1.6
-  - tip
+- 1.6
+- tip
 sudo: false
 before_script:
-  - go get ./...
-  - go get github.com/bitly/go-simplejson
-  - go get github.com/garyburd/redigo/redis
-
+- go get ./...
+- go get github.com/bitly/go-simplejson
+- go get github.com/garyburd/redigo/redis
 before_install:
-  - cp .netrc ~
-  - chmod 600 .netrc
-  - go get golang.org/x/tools/cmd/cover
-  - go get github.com/mattn/goveralls
-#install:
-#  - export GOPATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace:$GOPATH"
-#  - export PATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace/bin:$PATH"
-
+- cp .netrc ~
+- chmod 600 .netrc
+- go get golang.org/x/tools/cmd/cover
+- go get github.com/mattn/goveralls
 script:
-  - $HOME/gopath/bin/goveralls -repotoken $COVERALLS_TOKEN
+- $HOME/gopath/bin/goveralls -repotoken $COVERALLS_TOKEN
+env:
+  global:
+    secure: KqfkT8ms+ROjyjyzzQ7YgoCIk7QSybamLhVcjuuaeXsTCWOL/UH7RHNWIbG34IZHvUjzGokAWiMVBSC+bVmxLiIHlh9kdGgI7ImCM7ldy3AseQNrIoHenBMPgs4N7EwzL1kwIyVDJWm+9BJmqb8vsuM0JCd5pOel1GsEEx6wjh7RyRlqFwoepi1/WjbyAHJITNhurPuqxL+uBUJ8NIiNKvPMMKeVP721hNbHVSJ7f3QMEuyuLJm0RznynyysN1IWIT0LFvfzX1LoD4kskA5dUYBA3ZiLs9D4c0G2zjq9MDZNSoHj3MHx4U3ughFSVLxUMnk0z1+xPZdIQd1CO5CE2eWnvwHKHU939h62wsR/wEi+p54N1sfMmtUf78yBpCJ9xG9MSs+fjcYKeDJEg4+MI2A3Rz+WZk299RCwrokxwvzXYRmnMpfZfapu+iplas+U8+G6y2+bTg+wkcXD40CCwCNH8p6y6CetRMkkdfiUjexe0BIvymikqJgoDmG9NdNm40EzoA4/3zPKM45Ag/sQ7X0wuv0yMTfHUnpixRpYTvne5eTju3e7pYQ+HncZXMSZoQa3B719b4Iflb2byYuyIq2JoBwkMmZxP/3blHU5SCNXrns2TpXwh6hJRlxhF5af3gXwg14YHXU1K2gc55GAToygXKN/vHaNCxAmT5lr2DU=
