@@ -3,13 +3,16 @@ package KsanaDB
 import (
     redis "github.com/garyburd/redigo/redis"
     "log"
-//    "fmt"
+    "fmt"
     "time"
+    "errors"
 )
 
 var pool *redis.Pool 
+var maxPipeline int
 
 func InitRedis(network, address string)  {
+    maxPipeline = 8000 // too many  pipeline will get fewer data
     pool = &redis.Pool{                                                                                                    
         MaxIdle:     80,
         MaxActive: 12000,
@@ -48,11 +51,17 @@ func SetTimeSeries(metrics string, value string, time int64) (int, error) {
     return redis.Int(client.Do("ZADD", redis.Args{metrics}.AddFlat(input)...))
 }
 
-func queryTimeSeries(prefix string, name string, start int64, stop int64) ([]string) {
+func queryTimeSeries(prefix string, name string, start int64, stop int64) ([]string, error) {
     client := pool.Get()
     defer client.Close()
     cmds := getTimeseriesQueryCmd(prefix, name, start, stop)
+
+    if len(cmds) > maxPipeline {
+        return []string{}, errors.New(fmt.Sprintf("time %d - %d over upper limit duration days %d", start, stop, maxPipeline))    
+    }
+
     for _, cmd := range cmds {
+
         client.Send("ZRANGEBYSCORE", redis.Args{cmd["keyName"], cmd["from"], cmd["to"]}...)
     }
     client.Flush()
@@ -60,12 +69,13 @@ func queryTimeSeries(prefix string, name string, start int64, stop int64) ([]str
     ret := []string{}
     for _,_ = range cmds {
         p, err := redis.Strings(client.Receive())
-        if err != nil {
+        if err != nil || len(p) == 0{
             continue
         }
+
         ret = append(ret, p...)
     }
-    return ret
+    return ret, nil
 }
 
 

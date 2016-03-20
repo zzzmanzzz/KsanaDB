@@ -39,7 +39,9 @@ func concurrentPart(key string, startTimestamp int64, timeRange int64, aggregate
 
         rangeStartTime, rangeEndTime, aggResult, localResult = rangeAggreator(rangeStartTime, rangeEndTime, aggResult, tc, vc, aF, startTimestamp, timeRange, localResult)
     }
-    ret[key] = localResult
+    if len(localResult) > 0 {
+         ret[key] = localResult
+    }
     out <- ret
 }
 

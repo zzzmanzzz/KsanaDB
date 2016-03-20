@@ -137,6 +137,12 @@ func QueryData(q *Query) (map[string][]map[string]interface{} , error) {
             return nil, err 
         }
     }
+
+    if start > end {
+        return nil, errors.New(fmt.Sprintf("end time(%d) little than start time(%d)", end, start))
+    }
+
+
     tagFilter := []string {}
     groupByTag := q.Metric.GroupBy
     aggreationFunction := q.Metric.Aggregator.Name
@@ -169,12 +175,17 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
         return nil, err    
     }
 
-    rawData := queryTimeSeries(prefix , name , start , stop )
+    rawData, err := queryTimeSeries(prefix , name , start , stop )
+  
+    if err != nil {
+        return map[string][]map[string]interface{}{}, err
+    }
+
     if len(rawData) == 0 {
         return map[string][]map[string]interface{}{}, nil    
     }
     data, err := queryWorker(rawData, start, tagFilterSeq, groupBy, aggreationFunction, unit, timeRange)
-    fmt.Print("Find redord(s): ") 
+    fmt.Print("Find record(s): ") 
     fmt.Println(len(rawData)) 
     return data, err
 }
