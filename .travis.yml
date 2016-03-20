@@ -13,9 +13,9 @@ before_install:
   - chmod 600 .netrc
   - go get golang.org/x/tools/cmd/cover
   - go get github.com/mattn/goveralls
-install:
-  - export GOPATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace:$GOPATH"
-  - export PATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace/bin:$PATH"
+#install:
+#  - export GOPATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace:$GOPATH"
+#  - export PATH="${TRAVIS_BUILD_DIR}/Godeps/_workspace/bin:$PATH"
 
 script:
-    - $PATH/bin/goveralls -repotoken $COVERALLS_TOKEN
+  - $HOME/gopath/bin/goveralls -repotoken $COVERALLS_TOKEN
