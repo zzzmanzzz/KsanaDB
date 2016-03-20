@@ -5,7 +5,7 @@ import (
      "time" 
      "strconv"
      "errors"
-//     "encoding/json"
+     "encoding/json"
 ) 
 
 func getDateStartSec(timestamp int64) ( int64, int64 ) { 
@@ -119,3 +119,20 @@ func getTagSeq (tags map[string]interface{}, prefix string, name string) ([]inte
     return jarray
 }
 
+func getQueryTime(tNow time.Time, unit *string, value *json.Number) (int64, error) {
+    var absTime int64
+
+    if unit == nil || value == nil {
+        return -1, errors.New("Need set relative time")    
+    } else {
+        relativeTime, err := value.Int64()
+        if err != nil {
+             return -2, err 
+        }
+        absTime, err = relativeToAbsoluteTime(tNow, int(relativeTime), *unit)
+        if err != nil {
+            return -3, err 
+        }
+    }
+    return absTime, nil
+}

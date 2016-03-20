@@ -4,6 +4,7 @@ import (
     "time"
     "strconv"
     "fmt"
+    "encoding/json"
 )
 
 func Test_relativeToAbsoluteTimeInMilliSecond(t *testing.T) {
@@ -167,7 +168,123 @@ func Test_getTimeRange(t *testing.T) {
         t.Error("1 week range fail")
         fmt.Println(Oneday)
     }
+}
 
+func Test_getQueryTimeBefore1ms(t *testing.T) {
+    tNow := time.Now()
+    unit := "ms"
+    value := json.Number("1")
+    absTime, err := getQueryTime(tNow, &unit, &value)
+
+    if err != nil {
+        fmt.Println ("get query time fail")
+        t.Error(err)
+        fmt.Println(tNow.Unix())
+        fmt.Println(unit)
+        fmt.Println(value)
+    }
+
+    if tNow.Unix()*1000 - absTime != 1 {
+        t.Error("get query time fail, 1ms")
+        fmt.Println(tNow.Unix())
+        fmt.Println(unit)
+        fmt.Println(value)
+        fmt.Println(absTime)
+    }
 
 }
 
+func Test_getQueryTimeBefore1s(t *testing.T) {
+    tNow := time.Now()
+    unit := "s"
+    value := json.Number("1")
+    absTime, err := getQueryTime(tNow, &unit, &value)
+
+    if err != nil {
+        fmt.Println ("get query time fail")
+        t.Error(err)
+        fmt.Println(tNow.Unix())
+        fmt.Println(unit)
+        fmt.Println(value)
+    }
+
+    if tNow.Unix()*1000 - absTime != 1000 {
+        t.Error("get query time fail, 1s")
+        fmt.Println(tNow.Unix())
+        fmt.Println(unit)
+        fmt.Println(value)
+        fmt.Println(absTime)
+    }
+
+}
+
+
+func Test_getQueryTimeBefore1m(t *testing.T) {
+    tNow := time.Now()
+    unit := "m"
+    value := json.Number("1")
+    absTime, err := getQueryTime(tNow, &unit, &value)
+
+    if err != nil {
+        fmt.Println ("get query time fail")
+        t.Error(err)
+        fmt.Println(tNow.Unix())
+        fmt.Println(unit)
+        fmt.Println(value)
+    }
+
+    if tNow.Unix()*1000 - absTime != 60 * 1000 {
+        t.Error("get query time fail, 1m")
+        fmt.Println(tNow.Unix())
+        fmt.Println(unit)
+        fmt.Println(value)
+        fmt.Println(absTime)
+    }
+
+}
+
+func Test_getQueryTimeBefore1h(t *testing.T) {
+    tNow := time.Now()
+    unit := "h"
+    value := json.Number("1")
+    absTime, err := getQueryTime(tNow, &unit, &value)
+
+    if err != nil {
+        fmt.Println ("get query time fail")
+        t.Error(err)
+        fmt.Println(tNow.Unix())
+        fmt.Println(unit)
+        fmt.Println(value)
+    }
+
+    if tNow.Unix()*1000 - absTime != 60 * 60 * 1000 {
+        t.Error("get query time fail, 1h")
+        fmt.Println(tNow.Unix())
+        fmt.Println(unit)
+        fmt.Println(value)
+        fmt.Println(absTime)
+    }
+}
+
+func Test_getQueryTimeBefore1d(t *testing.T) {
+    tNow := time.Now()
+    unit := "d"
+    value := json.Number("1")
+    absTime, err := getQueryTime(tNow, &unit, &value)
+
+    if err != nil {
+        fmt.Println ("get query time fail")
+        t.Error(err)
+        fmt.Println(tNow.Unix())
+        fmt.Println(unit)
+        fmt.Println(value)
+    }
+
+    if tNow.Unix()*1000 - absTime != 24 * 60 * 60 * 1000 {
+        t.Error("get query time fail, 1h")
+        fmt.Println(tNow.Unix())
+        fmt.Println(unit)
+        fmt.Println(value)
+        fmt.Println(absTime)
+    }
+}

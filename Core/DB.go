@@ -109,14 +109,8 @@ func QueryData(q *Query) (map[string][]map[string]interface{} , error) {
     if q.StartAbsolute == nil {
         if q.StartRelative == nil {
             return nil, errors.New("Need set absolute start time")    
-        } else if q.StartRelative.Unit == nil || q.StartRelative.Value == nil {
-            return nil, errors.New("Need set relative start time")    
         } else {
-           rstart, err := q.StartRelative.Value.Int64()
-           if err != nil {
-               return nil, err 
-           }
-           start, err = relativeToAbsoluteTime(tNow, int(rstart), *q.StartRelative.Unit)
+           start, err = getQueryTime(tNow, q.StartRelative.Unit, q.StartRelative.Value) 
            if err != nil {
                return nil, err 
            }
@@ -131,14 +125,8 @@ func QueryData(q *Query) (map[string][]map[string]interface{} , error) {
     if q.EndAbsolute == nil {
         if q.EndRelative == nil {
             return nil, errors.New("Need set absolute end time")    
-        } else if q.EndRelative.Unit == nil || q.EndRelative.Value == nil {
-            return nil, errors.New("Need set relative end time")    
         } else {
-           rend, err := q.EndRelative.Value.Int64() 
-           if err != nil {
-               return nil, err 
-           }
-           end, err = relativeToAbsoluteTime(tNow, int(rend), *q.EndRelative.Unit)
+           end, err = getQueryTime(tNow, q.EndRelative.Unit, q.EndRelative.Value) 
            if err != nil {
                return nil, err 
            }
@@ -186,6 +174,8 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
         return map[string][]map[string]interface{}{}, nil    
     }
     data, err := queryWorker(rawData, start, tagFilterSeq, groupBy, aggreationFunction, unit, timeRange)
+    fmt.Print("Find redord(s): ") 
+    fmt.Println(len(rawData)) 
     return data, err
 }
 
