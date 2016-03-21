@@ -5,6 +5,7 @@ import(
      "strings"
 //    "time"
 //     "encoding/json"
+//     "fmt"
 )
 
 func queryWorker(dataList []string, startTimestamp int64, tagFilter []string, groupByTag map[string][]string, aggregateFunction string, sampleUnit string, sampleRange int) (map[string][]map[string]interface{}, error){

@@ -42,6 +42,4 @@ func Test_ParseJsonHash(t *testing.T) {
         t.Error("tags fail") 
         fmt.Println(tags)
     }
-
-
 }
