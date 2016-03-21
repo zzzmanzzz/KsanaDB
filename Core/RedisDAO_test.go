@@ -17,3 +17,7 @@ func Test_BulkSetTimeSeries(t *testing.T) {
     var input = []interface{}{"1", "2"}
     BulkSetTimeSeries("test", input)
 }
+
+func Test_SetTimeSeries(t *testing.T) {  
+    SetTimeSeries("test", "1.0", 123456789)
+}
