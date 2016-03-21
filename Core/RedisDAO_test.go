@@ -14,7 +14,7 @@ func init() {
 }
 
 func Test_BulkSetTimeSeries(t *testing.T) {  
-    var input = []interface{}{"1", "2"}
+    var input = []interface{}{"1", "2 "}
     BulkSetTimeSeries("test", input)
 }
 
