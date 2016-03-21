@@ -10,6 +10,13 @@ import (
 
 var pool *redis.Pool 
 var maxPipeline int
+type getClientFunc func() redis.Conn
+
+func getClient() redis.Conn {
+    return pool.Get()   
+}
+
+var clientFunction = getClient
 
 func InitRedis(network, address string)  {
     maxPipeline = 8000 // too many  pipeline will get fewer data
@@ -37,13 +44,13 @@ func InitRedis(network, address string)  {
 }  
 
 func BulkSetTimeSeries(metrics string, input []interface{}) (int, error) {
-    client := pool.Get()
+    client := clientFunction()
     defer client.Close()
     return redis.Int(client.Do("ZADD", redis.Args{metrics}.AddFlat(input)...))
 }
 
 func SetTimeSeries(metrics string, value string, time int64) (int, error) {
-    client := pool.Get()
+    client := clientFunction()
     defer client.Close()
     input := []interface{}{}
     input = append(input,time)
@@ -52,7 +59,7 @@ func SetTimeSeries(metrics string, value string, time int64) (int, error) {
 }
 
 func queryTimeSeries(prefix string, name string, start int64, stop int64) ([]string, error) {
-    client := pool.Get()
+    client := clientFunction()
     defer client.Close()
     cmds := getTimeseriesQueryCmd(prefix, name, start, stop)
 
@@ -81,7 +88,7 @@ func queryTimeSeries(prefix string, name string, start int64, stop int64) ([]str
 
 func setTags(prefix string, metrics string, tags []string) (string) {
     //TODO: call function
-    client := pool.Get()
+    client := clientFunction()
     defer client.Close()
     hashName := prefix + metrics + "\tTagHash"
     listName := prefix + metrics + "\tTagList"
@@ -108,7 +115,7 @@ func setTags(prefix string, metrics string, tags []string) (string) {
 } 
 
 func getTags(prefix string, metrics string, target string, keyName string) (string) {
-    client := pool.Get()
+    client := clientFunction()
     defer client.Close()
     listName := prefix + metrics + "\tTagList"
     s := getLuaScript("getTag")
@@ -122,7 +129,7 @@ func getTags(prefix string, metrics string, target string, keyName string) (stri
 } 
 
 func getSeqByKV(prefix string, metrics string, filterKeyValue []string) ([]string, error) {
-    client := pool.Get()
+    client := clientFunction()
     defer client.Close()
     hashName := prefix + metrics + "\tTagHash"
     return redis.Strings(client.Do("HMGET", redis.Args{hashName}.AddFlat(filterKeyValue)...))
