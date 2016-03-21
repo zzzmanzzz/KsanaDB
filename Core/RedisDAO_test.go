@@ -19,5 +19,6 @@ func Test_BulkSetTimeSeries(t *testing.T) {
 }
 
 func Test_SetTimeSeries(t *testing.T) {  
-    SetTimeSeries("test", "1.0", 123456789)
+    data := `{"name":"wyatt_new","tags":{"host":"server11","speed":"11","type":"tp1"},"value":1.000000}`
+    SetTimeSeries("test", data, 1234567890000)
 }
