@@ -288,3 +288,14 @@ func Test_getQueryTimeBefore1d(t *testing.T) {
         fmt.Println(absTime)
     }
 }
+
+func Test_generateTimeSeriesData(t *testing.T) {
+
+  keyname, offset :=generateTimeSeriesData("PREFIX\t", "test", 1458527539)
+  if keyname != "PREFIX\ttest\t1382400000" {
+      t.Error("keyname err")
+  }
+  if offset != 76127539 {
+      t.Error("offset err")
+  }
+}
