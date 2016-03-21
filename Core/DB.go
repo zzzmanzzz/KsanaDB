@@ -168,7 +168,7 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
             reverseHash = tmp.Val
         }
     }
-    fmt.Println(reverseHash)
+    reverseHash = reverseHash
 
     tagFilterSeq, err := GetFilterSeq(name, tagFilter)
     if err != nil {
@@ -176,7 +176,7 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
     }
 
     rawData, err := queryTimeSeries(prefix , name , start , stop )
-  
+
     if err != nil {
         return map[string][]map[string]interface{}{}, err
     }
@@ -184,6 +184,12 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
     if len(rawData) == 0 {
         return map[string][]map[string]interface{}{}, nil    
     }
+ fmt.Println(start)
+ fmt.Println(tagFilterSeq)
+ fmt.Println(groupBy)
+ fmt.Println(aggreationFunction)
+ fmt.Println(unit)
+ fmt.Println(timeRange)
     data, err := queryWorker(rawData, start, tagFilterSeq, groupBy, aggreationFunction, unit, timeRange)
     fmt.Print("Find record(s): ") 
     fmt.Println(len(rawData)) 
