@@ -7,10 +7,10 @@ before_script:
 - go get ./...
 - go get github.com/bitly/go-simplejson
 - go get github.com/garyburd/redigo/redis
+- go get github.com/rafaeljusto/redigomock
 before_install:
 - cp .netrc ~
 - chmod 600 .netrc
-#- go get golang.org/x/tools/cmd/cover
 - go get github.com/mattn/goveralls
 - if ! go get code.google.com/p/go.tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
 script:
