@@ -4,10 +4,50 @@ import(
         "fmt"
 )
 
-func Test_queryWorker(t *testing.T) {
+func Test_queryWorkerConcurrent(t *testing.T) {
     time := int64(1389024000000)
-    tagFilter := []string{"5","4"}
-    queryWorker(testinput,time, tagFilter,groupByTest,"sum","m",1) 
+    tagFilter := []string{}
+    ret, err := queryWorker(testinput,time, tagFilter,groupByTest,"sum","ms",1) 
+    if err != nil {
+        t.Error("queryWorkerConcurren fail") 
+        fmt.Println(err)
+    }
+    fmt.Println(ret)
+}
+
+func Test_queryWorkerConcurrentWithFilter(t *testing.T) {
+    time := int64(1389024000000)
+    tagFilter := []string{"12"}
+    ret, err := queryWorker(testinput,time, tagFilter,groupByTest,"sum","ms",1) 
+    if err != nil {
+        t.Error("queryWorkerConcurren fail") 
+        fmt.Println(err)
+    }
+    fmt.Println(ret)
+}
+
+func Test_queryWorkerNonCurrent(t *testing.T) {
+    time := int64(1389024000000)
+    tagFilter := []string{}
+    noGroupby := map[string][]string{}
+    ret, err :=   queryWorker(testinput,time, tagFilter,noGroupby,"sum","s",1) 
+    if err != nil {
+        t.Error("queryWorkerConcurren fail") 
+        fmt.Println(err)
+    }
+    fmt.Println(ret)
+}
+
+func Test_queryWorkerNonCurrentWithFilter(t *testing.T) {
+    time := int64(1389024000000)
+    tagFilter := []string{"5"}
+    noGroupby := map[string][]string{}
+    ret, err :=   queryWorker(testinput,time, tagFilter,noGroupby,"sum","s",1) 
+    if err != nil {
+        t.Error("queryWorkerConcurren fail") 
+        fmt.Println(err)
+    }
+    fmt.Println(ret)
 }
 
 func Test_rangeAggreator(t *testing.T) {  
@@ -101,5 +141,4 @@ var testinput = []string{
 var groupByTest = map[string][]string{
    "host":{"1","5","7","9","12","14","16","19","21","24"},
    "type":{"3","4","11","18","27"},
-   "speed":{"2","6","8","10","13","15","17","20"},
 }
