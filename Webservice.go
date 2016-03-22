@@ -43,6 +43,7 @@ func main() {
            } else {
                fmt.Println(err)
                w.WriteHeader(400)
+               w.Write([]byte(err.Error()))
            }
 
       })

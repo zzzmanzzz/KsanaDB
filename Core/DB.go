@@ -144,7 +144,10 @@ func QueryData(q *Query) (string , error) {
     }
 
 
-    tagFilter := []string {}
+    tagFilter := []string{} 
+    for k, v := range(q.Metric.Tags) {
+        tagFilter = append(tagFilter, fmt.Sprintf("%s\t%s", k,v))    
+    }
     groupByTag := q.Metric.GroupBy
     aggreationFunction := q.Metric.Aggregator.Name
     unit := *q.Metric.Aggregator.Sampling.Unit
@@ -165,15 +168,22 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
     if len(groupByTag) > 0 {
         for _,t := range groupByTag {
             tmp := GetMetricsTagSeq(name, t)
-            groupBy[t] = tmp.Seq[t]
+            if len(tmp.Seq[t]) > 0 {
+                groupBy[t] = tmp.Seq[t]
+            }
             reverseHash = tmp.Val
         }
     }
-    reverseHash = reverseHash
 
     tagFilterSeq, err := GetFilterSeq(name, tagFilter)
     if err != nil {
         return "", err    
+    }
+
+    for _, sq := range (tagFilterSeq) { 
+        if sq == "" {
+            return "", errors.New("Filter Tag(s) not Exist")
+        }
     }
 
     rawData, err := queryTimeSeries(prefix , name , start , stop )
@@ -185,6 +195,8 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
     if len(rawData) == 0 {
         return "{}", nil    
     }
+
+
     data, err := queryWorker(rawData, start, tagFilterSeq, groupBy, aggreationFunction, unit, timeRange)
 
 
