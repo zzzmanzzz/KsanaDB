@@ -14,6 +14,7 @@ func Test_groupBy(t *testing.T) {
     UnHitTagsA := []string{"1", "6"}
     UnHitTagsB := []string{"6"}
     UnHitTagsC := []string{"100", "9999"}
+    EmptyTag := []string{}
     
     r:=groupBy(group, HitTagsA)
     if len(r) != 2 {
@@ -43,6 +44,12 @@ func Test_groupBy(t *testing.T) {
     if len(r) != 0 {
         fmt.Println(group) 
         fmt.Println(UnHitTagsC)
+        t.Error("err")
+    }
+    r=groupBy(group, EmptyTag)
+    if len(r) != 0 {
+        fmt.Println(group) 
+        fmt.Println(EmptyTag)
         t.Error("err")
     }
 }
