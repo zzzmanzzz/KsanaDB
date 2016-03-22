@@ -252,16 +252,19 @@ func generateOutputData(result map[string][]map[string]interface{}, reverseHash 
     resultData.TimeRange = timeRange
     resultData.TimeUnit = unit
 
+
     for k,v := range(result) {
        gp := GroupType{}
        gp.Tags = map[string]string{}
        gp.Values = [][]interface{}{}
 
-       ka := strings.Split(k, "\t")
-       for _, s := range(ka) {
-           tagPair := reverseHash[s]
-           tagKV := strings.Split(tagPair, "\t")
-           gp.Tags[tagKV[0]] = tagKV[1]
+       if k != "single" {
+           ka := strings.Split(k, "\t")
+           for _, s := range(ka) {
+               tagPair := reverseHash[s]
+               tagKV := strings.Split(tagPair, "\t")
+               gp.Tags[tagKV[0]] = tagKV[1]
+           }
        }
 
        for _,d := range(v) {
