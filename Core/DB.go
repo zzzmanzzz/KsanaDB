@@ -170,6 +170,8 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
             tmp := GetMetricsTagSeq(name, t)
             if len(tmp.Seq[t]) > 0 {
                 groupBy[t] = tmp.Seq[t]
+            } else {
+                return "", errors.New("Input Group by tag(s) not Exist")    
             }
             reverseHash = tmp.Val
         }
@@ -182,7 +184,7 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
 
     for _, sq := range (tagFilterSeq) { 
         if sq == "" {
-            return "", errors.New("Filter Tag(s) not Exist")
+            return "", errors.New("Input Filter Tag(s) not Exist")
         }
     }
 
