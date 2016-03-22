@@ -16,8 +16,20 @@ func Test_getFuncMap(t *testing.T) {
         t.Error("max fial")    
     }
 
+    max = getFuncMap("max")
+    maxRet = max(200,100)
+    if maxRet != 200 {
+        t.Error("max fial")    
+    }
+
     min := getFuncMap("min")
     minRet := min(100,200)
+    if minRet != 100 {
+        t.Error("min fial")    
+    }
+
+    min = getFuncMap("min")
+    minRet = min(200,100)
     if minRet != 100 {
         t.Error("min fial")    
     }
