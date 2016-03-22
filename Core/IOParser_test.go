@@ -66,3 +66,27 @@ func Test_ParseJsonHashFail(t *testing.T) {
         t.Error(err) 
     }  
 }
+
+func Test_ParseJsonHashTimeFail(t *testing.T) {  
+    data := `{"tags":["16","17","18"],"timestamp":"xxxxxxx","value":"6.000000"}`
+    _, _, _, err := ParseJsonHash(data)
+    if err == nil {
+        t.Error(err) 
+    }  
+}
+
+func Test_ParseJsonHashValueFail(t *testing.T) {  
+    data := `{"tags":["16","17","18"],"timestamp":"1389162974606","value":"xxxxxxxxxx"}`
+    _, _, _, err := ParseJsonHash(data)
+    if err == nil {
+        t.Error(err) 
+    }  
+}
+
+func Test_ParseJsonHashTagFail(t *testing.T) {  
+    data := `{"tags":[16,17,18],"timestamp":"1389162974606","value":"6.000000"}`
+    _, _, _, err := ParseJsonHash(data)
+    if err == nil {
+        t.Error(err) 
+    }  
+}

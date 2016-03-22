@@ -38,11 +38,8 @@ func main() {
 
            ret, err := KsanaDB.QueryData(q)
            if err == nil {
-               for k, v := range(ret) {
-               fmt.Print(k)
-               fmt.Println(v)
-               }
-               w.WriteHeader(http.StatusOK)
+               //w.WriteHeader(http.StatusOK)
+               w.Write([]byte(ret))
            } else {
                fmt.Println(err)
                w.WriteHeader(400)

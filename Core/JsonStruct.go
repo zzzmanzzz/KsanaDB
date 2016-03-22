@@ -48,3 +48,25 @@ type AllTagSeqType struct {
     Val map[string]string
     Seq map[string][]string
 }
+
+type GroupType struct {
+    Tags map[string]string    
+    Values [][]interface{}
+}
+
+type ResultType struct {
+    Name string
+    Start int64//json.Number
+    End int64//json.Number
+    Filter []string
+    AggregateFunction string
+    TimeRange int
+    TimeUnit string
+    GroupBy []string
+    Group []GroupType
+}
+
+type OutputForm struct {
+     
+    Result ResultType
+}

@@ -6,6 +6,7 @@ import (
     "strconv"
     "time"
     "errors"
+    "strings"
 )
 
 var prefix = "KSANADBv1\t"
@@ -95,51 +96,51 @@ func SetData(data string) *error {
     return nil
 }
 
-func QueryData(q *Query) (map[string][]map[string]interface{} , error) {
+func QueryData(q *Query) (string , error) {
     var start int64 
     var end int64 
     var err error
 
     if q.Metric.Name == nil {
-        return nil, errors.New("Need set Metric name")    
+        return "", errors.New("Need set Metric name")    
     }
 
     tNow := time.Now()
 
     if q.StartAbsolute == nil {
         if q.StartRelative == nil {
-            return nil, errors.New("Need set absolute start time")    
+            return "", errors.New("Need set absolute start time")    
         } else {
            start, err = getQueryTime(tNow, q.StartRelative.Unit, q.StartRelative.Value) 
            if err != nil {
-               return nil, err 
+               return "", err 
            }
         }
     } else {
         start, err = q.StartAbsolute.Int64()
         if err != nil {
-            return nil, err 
+            return "", err 
         }
     }
 
     if q.EndAbsolute == nil {
         if q.EndRelative == nil {
-            return nil, errors.New("Need set absolute end time")    
+            return "", errors.New("Need set absolute end time")    
         } else {
            end, err = getQueryTime(tNow, q.EndRelative.Unit, q.EndRelative.Value) 
            if err != nil {
-               return nil, err 
+               return "", err 
            }
         }
     } else {
         end, err = q.EndAbsolute.Int64()
         if err != nil {
-            return nil, err 
+            return "", err 
         }
     }
 
     if start > end {
-        return nil, errors.New(fmt.Sprintf("end time(%d) little than start time(%d)", end, start))
+        return "", errors.New(fmt.Sprintf("end time(%d) little than start time(%d)", end, start))
     }
 
 
@@ -149,14 +150,14 @@ func QueryData(q *Query) (map[string][]map[string]interface{} , error) {
     unit := *q.Metric.Aggregator.Sampling.Unit
     timeRange, err := q.Metric.Aggregator.Sampling.Value.Int64()
     if err != nil {
-        return nil, err 
+        return "", err 
     }
 
     ret, err :=  QueryTimeSeriesData(*q.Metric.Name, start, end, tagFilter, groupByTag, aggreationFunction, int(timeRange), unit)
     return ret, err
 }
 
-func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []string, groupByTag []string, aggreationFunction string, timeRange int, unit string) (map[string][]map[string]interface{} , error) {
+func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []string, groupByTag []string, aggreationFunction string, timeRange int, unit string) (string , error) {
     
     groupBy := map[string][]string{}
     var reverseHash map[string]string
@@ -172,22 +173,26 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
 
     tagFilterSeq, err := GetFilterSeq(name, tagFilter)
     if err != nil {
-        return nil, err    
+        return "", err    
     }
 
     rawData, err := queryTimeSeries(prefix , name , start , stop )
 
     if err != nil {
-        return map[string][]map[string]interface{}{}, err
+        return "{}", err
     }
 
     if len(rawData) == 0 {
-        return map[string][]map[string]interface{}{}, nil    
+        return "{}", nil    
     }
     data, err := queryWorker(rawData, start, tagFilterSeq, groupBy, aggreationFunction, unit, timeRange)
+
+
+    ret, err := generateOutputData(data, reverseHash, name, start, stop, tagFilter, groupByTag, aggreationFunction, timeRange, unit)
+
     fmt.Print("Find record(s): ") 
     fmt.Println(len(rawData)) 
-    return data, err
+    return ret, err
 }
 
 func GetMetricsTag(name string, target string, keyName string) (map[string][]string)  {
@@ -205,7 +210,7 @@ func GetMetricsTag(name string, target string, keyName string) (map[string][]str
 
 func GetMetricsTagSeq(name string, keyName string) (AllTagSeqType)  {
     data := getTags(prefix, name, "TagSeq", keyName)
-    var ret AllTagSeqType //map[string]map[string][]string
+    var ret AllTagSeqType 
     json.Unmarshal([]byte(data), &ret)
     return ret
 }
@@ -219,4 +224,40 @@ func GetFilterSeq(name string, filterList []string) ([]string, error){
       return d, err
 }
 
+func generateOutputData(result map[string][]map[string]interface{}, reverseHash map[string]string, name string, start int64, stop int64, tagFilter []string, groupByTag []string, aggregationFunction string, timeRange int, unit string) (string , error) {
+    resultData := ResultType{}
+    resultData.Group = []GroupType{}
 
+    resultData.Name = name
+    resultData.GroupBy = groupByTag
+
+    resultData.Start = start
+    resultData.End = stop
+    resultData.Filter = tagFilter
+    resultData.AggregateFunction = aggregationFunction
+    resultData.TimeRange = timeRange
+    resultData.TimeUnit = unit
+
+    for k,v := range(result) {
+       gp := GroupType{}
+       gp.Tags = map[string]string{}
+       gp.Values = [][]interface{}{}
+
+       ka := strings.Split(k, "\t")
+       for _, s := range(ka) {
+           tagPair := reverseHash[s]
+           tagKV := strings.Split(tagPair, "\t")
+           gp.Tags[tagKV[0]] = tagKV[1]
+       }
+
+       for _,d := range(v) {
+           ele := []interface{}{}
+           ele = append(ele, d["timestamp"])
+           ele = append(ele, d["value"])
+           gp.Values = append(gp.Values, ele)
+       }
+       resultData.Group = append(resultData.Group, gp)
+    }
+    jret, err := json.Marshal(resultData)
+    return string(jret), err
+}
