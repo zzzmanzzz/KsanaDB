@@ -14,7 +14,7 @@ func init() {
 }
 
 func Test_BulkSetTimeSeries(t *testing.T) {  
-    var input = []interface{}{"1", "2 "}
+    var input = []interface{}{`{"name":"wyatt_new","tags":{"host":"server1","speed":"10","type":"tp2"},"datapoints":[[1458790110000,0],[1458790110001,1],[1458790110002,2]]}`,`{"name":"wyatt_new","tags":{"host":"server11","speed":"11","type":"tp1"},"datapoints":[[1458790110003,0],[1458790110103,1],[1458790110203,2]]}`}
     BulkSetTimeSeries("test", input)
 }
 
