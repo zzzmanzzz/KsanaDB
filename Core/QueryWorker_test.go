@@ -105,6 +105,61 @@ func Test_rangeAggreator(t *testing.T) {
     }
 }
 
+func Test_rangeAggreatorByCount(t *testing.T) {  
+   rangeStartTime := int64(0)
+   rangeEndTime := int64(0)
+   aggResult := float64(0)
+   currentElementTime := int64(6)
+   currentElementValue := float64(1)
+   aF := getFuncMap("count")
+   startTimestamp := int64(5)
+   timeRange := int64(10)
+   ret := []map[string]interface{}{}
+
+   rangeStartTime, rangeEndTime, aggResult, ret =  rangeAggreator(rangeStartTime, rangeEndTime, aggResult, currentElementTime, currentElementValue, aF, startTimestamp, timeRange, ret)
+
+    if rangeStartTime != 5 {
+        fmt.Printf("%d %d %f\n",rangeStartTime, rangeEndTime, aggResult)
+        t.Error("rangeStartTime fail")    
+    }
+
+    if rangeEndTime != 15 {
+        fmt.Printf("%d %d %f\n",rangeStartTime, rangeEndTime, aggResult)
+        t.Error("rangeEndTime fail")    
+    }
+
+    if len(ret) != 0 {
+        fmt.Printf("%d %d %f\n",rangeStartTime, rangeEndTime, aggResult)
+        t.Error("ret fail")    
+    }
+
+    currentElementTime = int64(16)
+
+    rangeStartTime, rangeEndTime, aggResult, ret =  rangeAggreator(rangeStartTime, rangeEndTime, aggResult, currentElementTime, currentElementValue, aF, startTimestamp, timeRange, ret)
+
+    if rangeStartTime != 15 {
+        fmt.Printf("%d %d %f\n",rangeStartTime, rangeEndTime, aggResult)
+        t.Error("rangeStartTime fail")    
+    }
+
+    if rangeEndTime != 25 {
+        fmt.Printf("%d %d %f\n",rangeStartTime, rangeEndTime, aggResult)
+        t.Error("rangeEndTime fail")    
+    }
+
+    if ret[0]["timestamp"] != int64(5) {
+        fmt.Printf("%d %d %f\n",rangeStartTime, rangeEndTime, aggResult)
+        fmt.Println(ret[0]["timestamp"])
+        t.Error("accumulate timestamp fail")    
+    }
+
+    if ret[0]["value"] != float64(1) {
+        fmt.Printf("%d %d %f\n",rangeStartTime, rangeEndTime, aggResult)
+        fmt.Println(ret[0]["value"])
+        t.Error("accumulate value fail")    
+    }
+}
+
 var testinput = []string{
                    `{"tags":["1","2","3"],"timestamp":"1389024000000","value":"0.000000"}`,
                    `{"tags":["4","5","6"],"timestamp":"1389024000101","value":"1.000000"}`,

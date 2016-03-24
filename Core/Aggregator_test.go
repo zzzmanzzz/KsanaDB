@@ -34,4 +34,10 @@ func Test_getFuncMap(t *testing.T) {
         t.Error("min fial")    
     }
 
+    count := getFuncMap("count")
+    countRet := count(0,100)
+    if countRet != 1 {
+        t.Error("count fial")    
+    }
+
 }

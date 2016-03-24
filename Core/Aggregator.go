@@ -17,6 +17,7 @@ var fnRegistry = map[string] interface{} {
                                                         return min
                                                     }
                                                   },
+    "count": func(sum float64, val float64) float64 { return sum + 1},
 }
 
 func getFuncMap(funName string) aggFunc {
@@ -28,6 +29,8 @@ func getFuncMap(funName string) aggFunc {
             aggf = fnRegistry["max"].(func(float64,float64)float64)
         case "min":
             aggf = fnRegistry["min"].(func(float64,float64)float64)
+        case "count":
+            aggf = fnRegistry["count"].(func(float64,float64)float64)
     }
     return aggf
 }
