@@ -1,6 +1,7 @@
 package KsanaDB
 import(
         "testing" 
+        "fmt"
 )
 
 func init() { 
@@ -23,4 +24,36 @@ func Test_SetDataPoints(t *testing.T) {
     if err != nil {
         t.Error(err)    
     }
+}
+
+func Test_QueryOverMaxPipeline(t *testing.T) {  
+    data := `{"startabsolute":1389024000000,"endabsolute":1389096010500,"metric":{"aggregator":{"name":"sum","sampling":{"unit":"h","value":1}},"tags":null,"name":"wyatt_test"}}`
+
+    maxPipeline = 0
+    q, err := ParseQueryJson(data)
+    if err != nil {
+        t.Error(err)    
+    }
+    _ , err = QueryData(q)
+    
+    if err == nil {
+        t.Error(err)    
+    }
+}
+
+func Test_QueryReturnNothing(t *testing.T) {  
+    maxPipeline = 8000
+    data := `{"startabsolute":1389024000000,"endabsolute":1389096010500,"metric":{"aggregator":{"name":"sum","sampling":{"unit":"h","value":1}},"tags":null,"name":"wyatt_test"}}`
+
+    q, err := ParseQueryJson(data)
+    if err != nil {
+        t.Error(err)    
+    }
+    result, err := QueryData(q)
+
+    if err != nil {
+        t.Error(err)    
+    }
+
+    fmt.Println(result)
 }

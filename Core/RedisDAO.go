@@ -64,7 +64,7 @@ func queryTimeSeries(prefix string, name string, start int64, stop int64) ([]str
     cmds := getTimeseriesQueryCmd(prefix, name, start, stop)
 
     if len(cmds) > maxPipeline {
-        return []string{}, errors.New(fmt.Sprintf("time %d - %d over upper limit duration days %d", start, stop, maxPipeline))    
+        return []string{}, errors.New(fmt.Sprintf("time %d - %d , query %d over upper limit duration days %d", start, stop, len(cmds), maxPipeline))    
     }
 
     for _, cmd := range cmds {
