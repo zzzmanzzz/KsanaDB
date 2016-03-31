@@ -201,7 +201,6 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
 
     data, err := queryWorker(rawData, start, tagFilterSeq, groupBy, aggreationFunction, unit, timeRange)
 
-
     ret, err := generateOutputData(data, reverseHash, name, start, stop, tagFilter, groupByTag, aggreationFunction, timeRange, unit)
 
     fmt.Print("Find record(s): ") 
@@ -209,17 +208,15 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
     return ret, err
 }
 
-func GetMetricsTag(name string, target string, keyName string) (map[string][]string)  {
-    var data string
+func GetMetricsTag(name string, target string, keyName string) (string, error)  {
+    var ret string
     switch target {
         case "All", "TagKey", "TagValue" :
-            data = getTags(prefix, name, target, keyName)
-      //  default:
-           
+            ret = getTags(prefix, name, target, keyName)
+        default:
+            return ret, errors.New("target should be All, TagKey or TagValue") 
     }
-    var ret map[string][]string
-    json.Unmarshal([]byte(data), &ret)
-    return ret
+    return ret, nil
 }
 
 func GetMetricsTagSeq(name string, keyName string) (AllTagSeqType)  {

@@ -109,8 +109,12 @@ func getLuaScript(name string) string {
             ret = tag(tagSeq);
         elseif target == "TagValue" then
             local tmp = all(tagSeq);
-            table.sort(tmp[tagName],compare);
-            ret[tagName] = tmp[tagName];
+            if tmp[tagName] == nil then
+                ret = {};
+            else
+                table.sort(tmp[tagName],compare);
+                ret[tagName] = tmp[tagName];
+            end    
         elseif target == "TagSeq" then
             local tmp = allSeq(tagSeq);
             ret["seq"] = {};

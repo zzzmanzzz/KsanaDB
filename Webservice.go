@@ -28,6 +28,34 @@ func main() {
            }
       })
 
+      m.Post("/api/v1/metricnames", func(w http.ResponseWriter, r *http.Request) {
+           fmt.Println(r.FormValue("data"))
+           ret, err := KsanaDB.GetMetricsTag(r.FormValue("data"), "TagKey", "")
+           if err == nil {
+               w.Write([]byte(ret))
+           } else {
+               w.WriteHeader(400)
+           }
+      })
+
+      m.Post("/api/v1/tagvalues", func(w http.ResponseWriter, r *http.Request) {
+           ret, err := KsanaDB.GetMetricsTag(r.FormValue("metric"), "TagValue", r.FormValue("tag"))
+           if err == nil {
+               w.Write([]byte(ret))
+           } else {
+               w.WriteHeader(400)
+           }
+      })
+
+      m.Post("/api/v1/tagnames", func(w http.ResponseWriter, r *http.Request) {
+           ret, err := KsanaDB.GetMetricsTag(r.FormValue("metric"), "TagKey", "")
+           if err == nil {
+               w.Write([]byte(ret))
+           } else {
+               w.WriteHeader(400)
+           }
+      })
+
       m.Post("/api/v1/query", func(w http.ResponseWriter, r *http.Request) {
            q, err := KsanaDB.ParseQueryJson(r.FormValue("data"))
 
