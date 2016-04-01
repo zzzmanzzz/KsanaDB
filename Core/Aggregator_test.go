@@ -1,5 +1,6 @@
 package KsanaDB
 import(
+        "fmt"
         "testing" 
 )
 
@@ -39,5 +40,19 @@ func Test_getFuncMap(t *testing.T) {
     if countRet != 1 {
         t.Error("count fial")    
     }
+
+    avg := getFuncMap("avg")
+    data := []float64 {10, 20, 30, 40, 50, 60}
+    answer := []float64 {10, 15, 20, 25, 30, 35}
+    average := float64(0)
+    for i, e := range(data) {
+        average = avg(average ,e)
+        if average != answer[i] {
+            t.Error("average fial")
+            fmt.Println(average)
+            fmt.Println(answer[i])
+        }
+    }
+
 
 }

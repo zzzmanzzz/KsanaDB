@@ -8,7 +8,6 @@ import(
 func getMock() redis.Conn {
     c := mock.NewConn()
    
-
     c.Command("EVALSHA").Expect("ok")
     c.Command("ZADD").Expect("ok")
 
