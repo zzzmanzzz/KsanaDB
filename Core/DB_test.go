@@ -57,3 +57,47 @@ func Test_QueryReturnNothing(t *testing.T) {
 
     fmt.Println(result)
 }
+
+func Test_GetMetricsTag(t *testing.T) {
+    name := "wyatt_test"
+    target := "All"
+    keyName := ""
+    _, err := GetMetricsTag(name, target, keyName)   
+    if err != nil {
+        t.Error(err)    
+    }
+}
+
+func Test_GetMetricsTag_WrongTargetName(t *testing.T) {
+    name := "test"
+    target := "all"
+    keyName := ""
+    _, err := GetMetricsTag(name, target, keyName)   
+    if err == nil {
+        t.Error(err)    
+    }
+}
+
+func Test_GetMetricsTagSeq(t *testing.T) {
+    name := "test"
+    keyName := "speed"
+    _ = GetMetricsTagSeq(name, keyName)  
+}
+
+func Test_GetFilterSeq_EmptyFilterList(t *testing.T) {
+    name := "test"
+    filterList := []string{}
+    ret, err := GetFilterSeq(name, filterList) 
+    if len(ret) != 0 {
+        t.Error(err)    
+    }
+}
+
+func Test_GetFilterSeq(t *testing.T) {
+    name := "test"
+    filterList := []string{"speed"}
+    _, err := GetFilterSeq(name, filterList) 
+    if err != nil {
+        t.Error(err)    
+    }
+}

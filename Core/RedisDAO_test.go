@@ -8,9 +8,14 @@ import(
 func getMock() redis.Conn {
     c := mock.NewConn()
    
+
     c.Command("EVALSHA").Expect("ok")
     c.Command("ZADD").Expect("ok")
 
+    var retHMGET []interface{}
+    d := []byte("test")
+    retHMGET = append(retHMGET, d)
+    c.Command("HMGET").Expect(retHMGET)
     return c    
 }
 
