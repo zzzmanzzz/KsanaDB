@@ -29,6 +29,9 @@ func SetData(data string) *error {
             name = hashdata.Name 
         }
 
+        if isMetricNameValidate(name) != true {
+            continue    
+        }
 
         if dataPoints == nil {
             value, _ := hashdata.Value.Float64()
@@ -245,6 +248,9 @@ func GetMetric() (string, error)  {
 }
 
 func DeleteMetric(name string) (string, error)  {
+    if isMetricNameValidate(name) != true {
+        return "", errors.New("Metric name can't content /t")    
+    }
     data, err := getMetricKeys(prefix, name)
     if err != nil {
         return "", err    

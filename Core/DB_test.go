@@ -108,5 +108,15 @@ func Test_GetMetric(t *testing.T) {
 }
 
 func Test_deleteMetric(t *testing.T) {
-    DeleteMetric("test")
+    _, err := DeleteMetric("test")
+    if err != nil && err.Error() == "Metric name can't content /t" {
+        t.Error(err)    
+    }
+}
+
+func Test_deleteMetricInvalidateName(t *testing.T) {
+    _, err := DeleteMetric("test\t")
+    if err == nil {
+        t.Error("deleteMetricInvalidateName test fail")    
+    }
 }
