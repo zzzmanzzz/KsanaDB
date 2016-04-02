@@ -208,17 +208,20 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
     return ret, err
 }
 
-func GetMetricsTag(name string, target string, keyName string) (map[string][]string, error)  {
-    var ret map[string][]string
+func GetMetricsTag(name string, target string, keyName string) (string, error)  {
+    var result map[string][]string
+    ret :=  map[string]map[string][]string{}
     var data string
     switch target {
         case "All", "TagKey", "TagValue" :
             data = getTags(prefix, name, target, keyName)
         default:
-            return ret, errors.New("target should be All, TagKey or TagValue") 
+            return "", errors.New("target should be All, TagKey or TagValue") 
     }
-    json.Unmarshal([]byte(data), &ret)
-    return ret, nil
+    json.Unmarshal([]byte(data), &result)
+    ret["result"] = result
+    jret, err := json.Marshal(ret)                                                                                  
+    return string(jret), err 
 }
 
 func GetMetricsTagSeq(name string, keyName string) (AllTagSeqType)  {
