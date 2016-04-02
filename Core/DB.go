@@ -231,11 +231,14 @@ func GetMetricsTagSeq(name string, keyName string) (AllTagSeqType)  {
     return ret
 }
 
-func GetMetric() ([]string)  {
+func GetMetric() (string, error)  {
     data := getMetric(prefix)
-    var ret []string 
-    json.Unmarshal([]byte(data), &ret)
-    return ret
+    var result []string 
+    ret := map[string] []string{}
+    json.Unmarshal([]byte(data), &result)
+    ret["result"] = result
+    jret, err := json.Marshal(ret)                                                                                  
+    return string(jret), err 
 }
 
 func GetFilterSeq(name string, filterList []string) ([]string, error){
