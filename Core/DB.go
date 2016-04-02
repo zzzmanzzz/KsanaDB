@@ -232,13 +232,25 @@ func GetMetricsTagSeq(name string, keyName string) (AllTagSeqType)  {
 }
 
 func GetMetric() (string, error)  {
-    data := getMetric(prefix)
+    data, err := getMetric(prefix)
+    if err != nil {
+        return "", err    
+    }
     var result []string 
     ret := map[string] []string{}
     json.Unmarshal([]byte(data), &result)
     ret["result"] = result
     jret, err := json.Marshal(ret)                                                                                  
     return string(jret), err 
+}
+
+func DeleteMetric(name string) (string, error)  {
+    data, err := getMetricKeys(prefix, name)
+    if err != nil {
+        return "", err    
+    }
+    deleteKeys(data)
+    return name, err 
 }
 
 func GetFilterSeq(name string, filterList []string) ([]string, error){

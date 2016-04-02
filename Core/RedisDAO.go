@@ -135,7 +135,7 @@ func getSeqByKV(prefix string, metrics string, filterKeyValue []string) ([]strin
     return redis.Strings(client.Do("HMGET", redis.Args{hashName}.AddFlat(filterKeyValue)...))
 }
 
-func getMetric(prefix string) (string) {
+func getMetric(prefix string) (string, error) {
     client := clientFunction()
     defer client.Close()
     dbName := prefix
@@ -146,8 +146,32 @@ func getMetric(prefix string) (string) {
     if err != nil {
         log.Println(err)    
     }
-    return result
+    return result, err
 } 
+
+func getMetricKeys(prefix string, metrics string) ([]string, error) {
+    client := clientFunction()
+    defer client.Close()
+    name := prefix + metrics + "\t"
+    s := getLuaScript("getMetricKeys")
+    script := redis.NewScript(0, s)
+
+    ret, err := redis.Strings(script.Do(client, name))
+    if err != nil {
+        log.Println(err)   
+        return []string{}, err
+    }
+    return ret, err
+}
+
+func deleteKeys(keys []string) {
+    client := clientFunction()
+    defer client.Close()
+    for _, key := range keys {
+        client.Send("DEL", redis.Args{key}...)
+    }
+    client.Flush()
+}
 
 func Close() {
     pool.Close()

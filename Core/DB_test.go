@@ -106,3 +106,7 @@ func Test_GetFilterSeq(t *testing.T) {
 func Test_GetMetric(t *testing.T) {
     GetMetric()
 }
+
+func Test_deleteMetric(t *testing.T) {
+    DeleteMetric("test")
+}

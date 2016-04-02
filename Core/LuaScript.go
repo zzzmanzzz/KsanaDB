@@ -158,6 +158,31 @@ getMetric := `
     end
     return cjson.encode(ret)    
 `
+
+getMetricKeys := `
+    local ret={};
+    local all_keys = {};
+    local dbPattern = ARGV[1].."*";
+    local cursor = "0";
+    local count = 100000000;
+    local done = false;
+    repeat
+        local result = redis.call("SCAN", cursor, "MATCH", dbPattern, "COUNT", count)
+        cursor = result[1];
+        local keys = result[2];
+        for i, key in ipairs(keys) do
+            all_keys[key] = true;
+        end
+        if cursor == "0" then
+            done = true;
+        end
+    until done
+
+    for k,v in pairs(all_keys) do
+        ret[#ret+1] = k
+    end
+    return ret    
+`
     var buffer bytes.Buffer
 
     ret := "" 
@@ -173,6 +198,8 @@ getMetric := `
         buffer.WriteString(split)
         buffer.WriteString(getMetric)
         ret = buffer.String() 
+    } else if name == "getMetricKeys" {
+        ret = getMetricKeys    
     }
     return ret
 }

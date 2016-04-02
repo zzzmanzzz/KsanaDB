@@ -55,6 +55,15 @@ func main() {
            }
       })
 
+      m.Delete("/api/v1/metric", func(w http.ResponseWriter, r *http.Request) {
+           ret, err := KsanaDB.DeleteMetric(r.FormValue("metric"))
+           if err == nil {
+               w.Write([]byte(ret))
+           } else {
+               w.WriteHeader(400)
+           }
+      })
+
       m.Post("/api/v1/query", func(w http.ResponseWriter, r *http.Request) {
            q, err := KsanaDB.ParseQueryJson(r.FormValue("data"))
 

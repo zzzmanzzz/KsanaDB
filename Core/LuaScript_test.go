@@ -7,6 +7,7 @@ func Test_getTag(t *testing.T) {
     setTag := getLuaScript("setTag")
     getTag := getLuaScript("getTag")
     getMetric := getLuaScript("getMetric")
+    getMetricKeys := getLuaScript("getMetricKeys")
     noTag := getLuaScript("noTag")
 
     if setTag == "" {
@@ -19,6 +20,10 @@ func Test_getTag(t *testing.T) {
 
     if getMetric == "" {
         t.Error("get getMetric script fail")    
+    }
+
+    if getMetricKeys == "" {
+        t.Error("get getMetricKeys script fail")    
     }
 
     if noTag != "" {

@@ -36,3 +36,17 @@ func Test_getMetric(t *testing.T) {
     prefix = "KSANADBv1\t"
     getMetric(prefix)    
 }
+
+func Test_getMetricKeys(t *testing.T) {
+    prefix = "KSANADBv1\t"
+    getMetricKeys(prefix, "wyatt_test")    
+}
+
+func Test_deleteKeys(t *testing.T) {
+    data := []string{
+             "KSANADBv1\twyatt_new\tTagList",
+             "KSANADBv1\twyatt_new\t1459555200000",
+             "KSANADBv1\twyatt_new\tTagHash",
+        }
+    deleteKeys(data)    
+}
