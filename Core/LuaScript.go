@@ -1,4 +1,7 @@
 package KsanaDB
+import (
+    "bytes"
+)
 
 func getLuaScript(name string) string {
     setTag :=` 
@@ -25,12 +28,14 @@ func getLuaScript(name string) string {
         return cjson.encode(ret);
     `
 
-    // http://lua-users.org/wiki/SplitJoin
-    getTag := `
+    compare := `
         local function compare(a,b)
             return a<b;
         end
+    `
 
+    // http://lua-users.org/wiki/SplitJoin
+    split := `
         local function split (str, pat) 
             local t = {};
             local fpat = "(.-)" .. pat;
@@ -50,6 +55,9 @@ func getLuaScript(name string) string {
             return t;
         end
 
+    `
+
+    getTag := `
         local function all (tagSeq)
             local ret = {}; 
             local kv = {};
@@ -124,12 +132,47 @@ func getLuaScript(name string) string {
         return cjson.encode(ret);
     `
 
+getMetric := `
+    local kv={};
+    local ret={};
+    local all_keys = {};
+    local dbPattern = ARGV[1].."*";
+    local cursor = "0";
+    local count = 100000000;
+    local done = false;
+    repeat
+        local result = redis.call("SCAN", cursor, "MATCH", dbPattern, "COUNT", count)
+        cursor = result[1];
+        local keys = result[2];
+        for i, key in ipairs(keys) do
+            kv = split(key, "\t")
+            all_keys[kv[2]] = true;
+        end
+        if cursor == "0" then
+            done = true;
+        end
+    until done
+
+    for k,v in pairs(all_keys) do
+        ret[#ret+1] = k
+    end
+    return cjson.encode(ret)    
+`
+    var buffer bytes.Buffer
+
     ret := "" 
 
     if name == "setTag" {
         ret = setTag
     } else if name == "getTag" {
-        ret = getTag    
+        buffer.WriteString(compare)
+        buffer.WriteString(split)
+        buffer.WriteString(getTag)
+        ret = buffer.String()
+    } else if name == "getMetric" {
+        buffer.WriteString(split)
+        buffer.WriteString(getMetric)
+        ret = buffer.String() 
     }
     return ret
 }

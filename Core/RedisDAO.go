@@ -135,6 +135,20 @@ func getSeqByKV(prefix string, metrics string, filterKeyValue []string) ([]strin
     return redis.Strings(client.Do("HMGET", redis.Args{hashName}.AddFlat(filterKeyValue)...))
 }
 
+func getMetric(prefix string) (string) {
+    client := clientFunction()
+    defer client.Close()
+    dbName := prefix
+    s := getLuaScript("getMetric")
+    script := redis.NewScript(0, s)
+
+    result, err := redis.String(script.Do(client, dbName))
+    if err != nil {
+        log.Println(err)    
+    }
+    return result
+} 
+
 func Close() {
     pool.Close()
 }

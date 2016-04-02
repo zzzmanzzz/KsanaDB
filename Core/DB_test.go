@@ -101,3 +101,8 @@ func Test_GetFilterSeq(t *testing.T) {
         t.Error(err)    
     }
 }
+
+
+func Test_GetMetric(t *testing.T) {
+    GetMetric()
+}

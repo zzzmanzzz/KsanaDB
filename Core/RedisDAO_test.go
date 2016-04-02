@@ -31,3 +31,8 @@ func Test_SetTimeSeries(t *testing.T) {
     data := `{"name":"wyatt_new","tags":{"host":"server11","speed":"11","type":"tp1"},"value":1.000000}`
     SetTimeSeries("test", data, 1234567890000)
 }
+
+func Test_getMetric(t *testing.T) {
+    prefix = "KSANADBv1\t"
+    getMetric(prefix)    
+}
