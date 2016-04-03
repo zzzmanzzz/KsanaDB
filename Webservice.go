@@ -1,22 +1,75 @@
 package main
 
 import (
-    //"strconv"           
+    "strconv"
     "fmt" 
-    //"math/rand"         
-//    "time"
+    "os"
+    "bytes"
     "net/http"
     "github.com/zzzmanzzz/KsanaDB/Core"
     "github.com/go-martini/martini"
+    "gopkg.in/yaml.v2"
 )
 
-func init() {
+var redisServer string
+var redisPort string
+var ksanaDBPort int 
 
+type Conf struct {
+    RedisServer string `yaml:"RedisServer"`
+    RedisPort int `yaml:"RedisPort"`
+    KsanaDBPort int `yaml:"KsanaDBPort"`
+}
+
+
+func init() {
+    //default
+    redisServer = "127.0.0.1"
+    redisPort = "6379"
+    ksanaDBPort = 13000
+
+    file, err := os.Open("./KsanaDb.conf")
+    if err != nil {
+        fmt.Println(err) 
+        fmt.Println("Open config KsanaDB.conf fail")
+        fmt.Println("Use default Config")
+        printConfig()
+        return
+    }
+
+    data := make([]byte, 100)
+    _, err = file.Read(data)
+    if err != nil {
+        fmt.Println(err) 
+        fmt.Println("Read config KsanaDB.conf fail")
+        fmt.Println("Use default Config")
+        printConfig()
+        return
+    }
+
+    c := Conf{}
+    err = yaml.Unmarshal( bytes.Trim(data, "\x00"), &c)
+    if err != nil {
+        fmt.Println(err) 
+        fmt.Println("Parse config KsanaDB.conf fail")
+        fmt.Println("Use default Config")
+        printConfig()
+        return
+    }
+
+    redisServer = c.RedisServer
+    redisPort = strconv.Itoa(c.RedisPort)
+    ksanaDBPort = c.KsanaDBPort
+    printConfig()
+}
+
+func printConfig () {
+    fmt.Printf("redis server ip : %s\nredis port : %s\nKsanaDB port : %d\n" , redisServer, redisPort, ksanaDBPort) 
 }
 
 func main() {
       m := martini.Classic()
-      KsanaDB.InitRedis("tcp", "127.0.0.1:6379")
+      KsanaDB.InitRedis("tcp", redisServer + ":" + redisPort )
 
       m.Post("/api/v1/datapoints", func(w http.ResponseWriter, r *http.Request) {
            var err *error
@@ -84,5 +137,5 @@ func main() {
 
       })
 
-      m.RunOnAddr(fmt.Sprintf(":%d", 13000 ))//+ time.Now().Unix()%100))
+      m.RunOnAddr(fmt.Sprintf(":%d", ksanaDBPort ))
 }
