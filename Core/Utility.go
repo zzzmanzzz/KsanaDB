@@ -111,7 +111,7 @@ func getTagSeq (tags map[string]interface{}, prefix string, name string) ([]inte
                     data = fmt.Sprintf("%f",v)
             }
 
-            kvArray = append(kvArray, fmt.Sprintf("%s\t%s",k,data.(string))) 
+            kvArray = append(kvArray, fmt.Sprintf("%s\t%s",removeTab(k),removeTab(data.(string)))) 
         }
         jTagSeq = setTags(prefix, name, kvArray)
     }
