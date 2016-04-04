@@ -58,12 +58,12 @@ type ResultType struct {
     Name string
     Start int64//json.Number
     End int64//json.Number
-    Filter []string
+    Filter []string `json:"Filter,omitempty"`
     AggregateFunction string
     TimeRange int
     TimeUnit string
-    GroupBy []string
-    Group []GroupType
+    GroupBy []string `json:"GroupBy,omitempty"`
+    Group []GroupType 
 }
 
 type OutputForm struct {
