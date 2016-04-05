@@ -277,11 +277,18 @@ func generateOutputData(result map[string][]map[string]interface{}, reverseHash 
 
     resultData.Start = start
     resultData.End = stop
-    resultData.Filter = tagFilter
+
     resultData.AggregateFunction = aggregationFunction
     resultData.TimeRange = timeRange
     resultData.TimeUnit = unit
 
+    if len(tagFilter) > 0 {
+       resultData.Filter = map[string]string{}
+       for _,d := range(tagFilter) {
+           ka := strings.Split(d, "\t")
+           resultData.Filter[ka[0]] = ka[1]
+       }
+    }
 
     for k,v := range(result) {
        gp := GroupType{}

@@ -31,7 +31,7 @@ type MetricType struct {
    Tags map[string]string
    Name *string
    Limit *json.Number
-   GroupBy []string
+   GroupBy  []string
    Aggregator AggregatorType
 }
 
@@ -58,7 +58,7 @@ type ResultType struct {
     Name string
     Start int64//json.Number
     End int64//json.Number
-    Filter []string `json:"Filter,omitempty"`
+    Filter map[string]string `json:"Filter,omitempty"`
     AggregateFunction string
     TimeRange int
     TimeUnit string
