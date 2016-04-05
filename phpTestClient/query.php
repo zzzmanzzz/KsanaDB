@@ -3,14 +3,14 @@ $ch = curl_init();
 $host =  "http://127.0.0.1:13000";
 $inputUrl = $host . "/api/v1/query";
 
-//$tags["type"] = "tp0";                                                                                    
-//$tags["speed"] = "11";
+$tags["type"] = "tp0";                                                                                    
+$tags["speed"] = "11";
 
 
 
-//$metric["groupby"][0] = "host";
-//$metric["groupby"][1] = "type";
-//$metric["groupby"][2] = "speed";
+$metric["groupby"][0] = "host";
+$metric["groupby"][1] = "type";
+$metric["groupby"][2] = "speed";
 
 $metric["aggregator"]["name"] = "sum";
 $metric["aggregator"]["sampling"]["unit"] = "h";
