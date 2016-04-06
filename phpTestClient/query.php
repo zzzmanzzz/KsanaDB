@@ -3,24 +3,22 @@ $ch = curl_init();
 $host =  "http://127.0.0.1:13000";
 $inputUrl = $host . "/api/v1/query";
 
-$tags["type"] = "tp0";                                                                                    
+$tags["type"] = "tp1";                                                                                    
 $tags["speed"] = "11";
-
-
 
 $metric["groupby"][0] = "host";
 $metric["groupby"][1] = "type";
 $metric["groupby"][2] = "speed";
 
 $metric["aggregator"]["name"] = "sum";
-$metric["aggregator"]["sampling"]["unit"] = "h";
+$metric["aggregator"]["sampling"]["unit"] = "m";
 $metric["aggregator"]["sampling"]["value"] = 1;
 
 $metric["tags"] = $tags;
-$metric["name"] = "wyatt_test";
+$metric["name"] = "wyatt_new";
 
- $input["startabsolute"]= 1389024000000;
-  $input["endabsolute"] = 1389024000000 +  60 * 60 * 4 *  5 *1000 + 10500;
+ $input["startabsolute"]= 1459900800000;//1389024000000;
+  $input["endabsolute"] = $input["startabsolute"] +  60 * 60 * 4 *  5 *1000 + 10500;
 $input["metric"] = $metric;
 
 $post = json_encode($input);
