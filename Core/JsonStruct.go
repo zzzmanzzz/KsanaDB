@@ -49,9 +49,10 @@ type AllTagSeqType struct {
     Seq map[string][]string
 }
 
+
 type GroupType struct {
     Tags map[string]string    
-    Values [][]interface{}
+    Values [][] interface{}
 }
 
 type ResultType struct {

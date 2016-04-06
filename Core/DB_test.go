@@ -1,5 +1,6 @@
 package KsanaDB
 import(
+        "encoding/json"
         "testing" 
         "fmt"
 )
@@ -120,3 +121,49 @@ func Test_deleteMetricInvalidateName(t *testing.T) {
         t.Error("deleteMetricInvalidateName test fail")    
     }
 }
+
+func Test_generateOutputData(t *testing.T) {
+    var result map[string][]map[string]interface{}
+    json.Unmarshal([]byte(queryResultJ), &result) 
+
+    var reverseHash map[string]string
+    json.Unmarshal([]byte(reverseHashJ), &reverseHash) 
+
+    var filterTag []string
+    json.Unmarshal([]byte(filterTagJ), &filterTag) 
+
+    var groupBy []string
+    json.Unmarshal([]byte(groupByJ), &groupBy) 
+ 
+    name := "wyatt_new"
+
+    start := int64(1459900800000)
+    end := int64(1459972810500)
+ 
+    aggregationFunction := "sum"
+
+    timeRange := 1
+    unit := "m"
+
+    _, err := generateOutputData(result, reverseHash, name, start, end, filterTag, groupBy, aggregationFunction, timeRange, unit)
+    if err != nil {
+        t.Error(err)    
+    }
+
+}
+
+var queryResultJ = `
+{"4\t5\t6":[{"timestamp":1459920000000,"value":24090},{"timestamp":1459920060000,"value":311700},{"timestamp":1459920120000,"value":671700},{"timestamp":1459920180000,"value":1.0317e+06},{"timestamp":1459920240000,"value":1.3917e+06}]}
+`
+var reverseHashJ = `
+{"1":"host\tserver1","2":"speed\t10","3":"type\ttp2","4":"host\tserver11","5":"speed\t11","6":"type\ttp1"}
+`
+var filterTagJ = `
+["type\ttp1","speed\t11"]
+`
+
+var groupByJ = `
+["host","type","speed"]
+`
+
+var generateAnswer = `{"Name":"wyatt_new","Start":1459900800000,"End":1459972810500,"Filter":{"speed":"11","type":"tp1"},"AggregateFunction":"sum","TimeRange":1,"TimeUnit":"m","GroupBy":["host","type","speed"],"Group":[{"Tags":{"host":"server11","speed":"11","type":"tp1"},"Values":[[1459920000000,24090],[1459920060000,311700],[1459920120000,671700],[1459920180000,1.0317e+06],[1459920240000,1.3917e+06]]}]}`

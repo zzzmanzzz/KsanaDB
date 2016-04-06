@@ -305,9 +305,7 @@ func generateOutputData(result map[string][]map[string]interface{}, reverseHash 
        }
 
        for _,d := range(v) {
-           ele := []interface{}{}
-           ele = append(ele, d["timestamp"])
-           ele = append(ele, d["value"])
+           ele := []interface{}{d["timestamp"], d["value"]}
            gp.Values = append(gp.Values, ele)
        }
        resultData.Group = append(resultData.Group, gp)
