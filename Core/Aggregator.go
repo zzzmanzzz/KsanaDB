@@ -48,10 +48,13 @@ var fnRegistry = map[string] interface{} {
                 mean = mean + delta / float64(i)
                 m2 = m2 + delta * (val - mean)
                 if i < 2 {
-                    return math.NaN()    
+                    return math.SmallestNonzeroFloat64
                 } 
                 return math.Sqrt(m2/float64((i-1)))
             }
+         },
+    "raw": func(dummy float64, val float64, others ...interface{}) float64 { 
+             return val
          },
 }
 
@@ -72,6 +75,8 @@ func getFuncMap(funName string) func(float64, float64, ...interface{}) float64 {
         case "std":
             f := fnRegistry["std"].(func() func(float64, float64, ...interface{}) float64)
             aggf = f()
+        case "raw":
+            aggf = fnRegistry["raw"].(func(float64, float64, ...interface{}) float64)
     }
     return aggf
 }

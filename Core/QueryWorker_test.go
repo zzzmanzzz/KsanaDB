@@ -160,6 +160,31 @@ func Test_rangeAggreatorByCount(t *testing.T) {
     }
 }
 
+func Test_aggreatorByRaw(t *testing.T) {
+   rangeStartTime := int64(0)
+   rangeEndTime := int64(0)
+   aggResult := float64(0)
+   currentElementTime := int64(6)
+   currentElementValue := float64(1)
+   aggFun := aggreatorFactory("raw")
+   startTimestamp := int64(5)
+   timeRange := int64(10)
+   ret := []map[string]interface{}{}
+
+   rangeStartTime, rangeEndTime, aggResult, ret =  aggFun(rangeStartTime, rangeEndTime, aggResult, currentElementTime, currentElementValue, startTimestamp, timeRange, ret)
+
+    if ret[0]["timestamp"] != int64(6) {
+        fmt.Println(ret[0]["timestamp"])
+        t.Error("non accumulate timestamp fail")    
+    }
+
+    if ret[0]["value"] != float64(1) {
+        fmt.Println(ret[0]["value"])
+        t.Error("non accumulate value fail")    
+    }
+   fmt.Println(ret)
+}
+
 var testinput = []string{
                    `{"tags":["1","2","3"],"timestamp":"1389024000000","value":"0.000000"}`,
                    `{"tags":["4","5","6"],"timestamp":"1389024000101","value":"1.000000"}`,
