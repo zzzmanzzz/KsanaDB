@@ -74,5 +74,23 @@ func Test_getFuncMap(t *testing.T) {
     if rawVal != 200 {
         t.Error("raw fial")    
     }
+}
 
+
+func Test_isTimeRangeFunction(t *testing.T) {  
+    rangeFunction := []string {"sum", "max", "min", "count", "avg", "std"}
+    nonRangeFunction := []string{"raw"}
+    for _,d := range(rangeFunction) {
+        if isTimeRangeFunction(d)  == false  {
+             fmt.Println(d)
+             t.Error("isTimeRangeFunction fail")    
+        }
+    }
+
+    for _,d := range(nonRangeFunction) {
+        if isTimeRangeFunction(d)  == true  {
+             fmt.Println(d)
+             t.Error("isTimeRangeFunction fail")    
+        }
+    }
 }

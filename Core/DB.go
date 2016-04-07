@@ -92,8 +92,6 @@ func SetData(data string) *error {
                     continue    
                 }
             }
-
-            //fmt.Println(inputData)
         }
     }
     return nil
@@ -153,10 +151,18 @@ func QueryData(q *Query) (string , error) {
     }
     groupByTag := q.Metric.GroupBy
     aggreationFunction := q.Metric.Aggregator.Name
-    unit := *q.Metric.Aggregator.Sampling.Unit
-    timeRange, err := q.Metric.Aggregator.Sampling.Value.Int64()
-    if err != nil {
-        return "", err 
+
+    var unit string
+    if q.Metric.Aggregator.Sampling.Unit != nil {
+        unit = *q.Metric.Aggregator.Sampling.Unit
+    }
+
+    var timeRange int64
+    if q.Metric.Aggregator.Sampling.Value != nil {
+        timeRange, err = q.Metric.Aggregator.Sampling.Value.Int64()
+            if err != nil {
+                return "", err 
+            }
     }
 
     ret, err :=  QueryTimeSeriesData(*q.Metric.Name, start, end, tagFilter, groupByTag, aggreationFunction, int(timeRange), unit)

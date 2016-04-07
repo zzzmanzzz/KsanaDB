@@ -1,11 +1,7 @@
 package KsanaDB
 import(
-//     "strconv" 
      "log"
      "strings"
-//    "time"
-//     "encoding/json"
-//     "fmt"
 )
 
 func queryWorker(dataList []string, startTimestamp int64, tagFilter []string, groupByTag map[string][]string, aggregateFunction string, sampleUnit string, sampleRange int) (map[string][]map[string]interface{}, error){
@@ -28,7 +24,6 @@ func concurrentPart(key string, startTimestamp int64, timeRange int64, aggregate
     ret := map[string][]map[string]interface{}{}
     localResult := []map[string]interface{}{}
 
-    //aF := getFuncMap(aggregateFunction)
     aggFun := aggreatorFactory(aggregateFunction) 
 
     for {
@@ -51,10 +46,13 @@ func concurrentQuery(dataList []string, startTimestamp int64, tagFilter []string
     ret := map[string][]map[string]interface{}{}
     end := len(dataList)  
 
-    timeRange, err := getTimeRange(startTimestamp, sampleRange, sampleUnit )
-
-    if err != nil {
-         return nil, err    
+    var timeRange int64
+    if isTimeRangeFunction(aggregateFunction) {
+        var err error
+        timeRange, err = getTimeRange(startTimestamp, sampleRange, sampleUnit )
+            if err != nil {
+                return nil, err    
+            }
     }
 
     hasTagFilter := len(tagFilter) > 0
@@ -117,17 +115,19 @@ func nonConcurrentQuery(dataList []string, startTimestamp int64, tagFilter []str
     result := map[string][]map[string]interface{}{}
     end := len(dataList)  
 
-    timeRange, err := getTimeRange(startTimestamp, sampleRange, sampleUnit )
-
-    if err != nil {
-         return nil, err    
+    var timeRange int64
+    if isTimeRangeFunction(aggregateFunction) {
+        var err error
+        timeRange, err = getTimeRange(startTimestamp, sampleRange, sampleUnit )
+            if err != nil {
+                return nil, err    
+            }
     }
 
     aggResult := float64(0)
     rangeStartTime := int64(0)
     rangeEndTime := int64(0)
 
-    //aF := getFuncMap(aggregateFunction)
     aggfun := aggreatorFactory(aggregateFunction) 
 
     hasTagFilter := len(tagFilter) > 0
