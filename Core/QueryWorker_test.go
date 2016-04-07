@@ -56,12 +56,12 @@ func Test_rangeAggreator(t *testing.T) {
    aggResult := float64(0)
    currentElementTime := int64(6)
    currentElementValue := float64(1)
-   aF := getFuncMap("sum")
+   aggFun := aggreatorFactory("sum")
    startTimestamp := int64(5)
    timeRange := int64(10)
    ret := []map[string]interface{}{}
 
-   rangeStartTime, rangeEndTime, aggResult, ret =  rangeAggreator(rangeStartTime, rangeEndTime, aggResult, currentElementTime, currentElementValue, aF, startTimestamp, timeRange, ret)
+   rangeStartTime, rangeEndTime, aggResult, ret = aggFun(rangeStartTime, rangeEndTime, aggResult, currentElementTime, currentElementValue, startTimestamp, timeRange, ret)
 
     if rangeStartTime != 5 {
         fmt.Printf("%d %d %f\n",rangeStartTime, rangeEndTime, aggResult)
@@ -80,7 +80,7 @@ func Test_rangeAggreator(t *testing.T) {
 
     currentElementTime = int64(16)
 
-    rangeStartTime, rangeEndTime, aggResult, ret =  rangeAggreator(rangeStartTime, rangeEndTime, aggResult, currentElementTime, currentElementValue, aF, startTimestamp, timeRange, ret)
+    rangeStartTime, rangeEndTime, aggResult, ret = aggFun(rangeStartTime, rangeEndTime, aggResult, currentElementTime, currentElementValue, startTimestamp, timeRange, ret)
 
     if rangeStartTime != 15 {
         fmt.Printf("%d %d %f\n",rangeStartTime, rangeEndTime, aggResult)
@@ -111,12 +111,12 @@ func Test_rangeAggreatorByCount(t *testing.T) {
    aggResult := float64(0)
    currentElementTime := int64(6)
    currentElementValue := float64(1)
-   aF := getFuncMap("count")
+   aggFun := aggreatorFactory("count")
    startTimestamp := int64(5)
    timeRange := int64(10)
    ret := []map[string]interface{}{}
 
-   rangeStartTime, rangeEndTime, aggResult, ret =  rangeAggreator(rangeStartTime, rangeEndTime, aggResult, currentElementTime, currentElementValue, aF, startTimestamp, timeRange, ret)
+   rangeStartTime, rangeEndTime, aggResult, ret =  aggFun(rangeStartTime, rangeEndTime, aggResult, currentElementTime, currentElementValue, startTimestamp, timeRange, ret)
 
     if rangeStartTime != 5 {
         fmt.Printf("%d %d %f\n",rangeStartTime, rangeEndTime, aggResult)
@@ -135,7 +135,7 @@ func Test_rangeAggreatorByCount(t *testing.T) {
 
     currentElementTime = int64(16)
 
-    rangeStartTime, rangeEndTime, aggResult, ret =  rangeAggreator(rangeStartTime, rangeEndTime, aggResult, currentElementTime, currentElementValue, aF, startTimestamp, timeRange, ret)
+    rangeStartTime, rangeEndTime, aggResult, ret = aggFun(rangeStartTime, rangeEndTime, aggResult, currentElementTime, currentElementValue, startTimestamp, timeRange, ret)
 
     if rangeStartTime != 15 {
         fmt.Printf("%d %d %f\n",rangeStartTime, rangeEndTime, aggResult)
