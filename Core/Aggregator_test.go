@@ -2,6 +2,7 @@ package KsanaDB
 import(
         "fmt"
         "testing" 
+        "math"
 )
 
 func Test_getFuncMap(t *testing.T) {  
@@ -54,5 +55,26 @@ func Test_getFuncMap(t *testing.T) {
         }
     }
 
+    std := getFuncMap("std")
+    data = []float64 {20, 20, 20, 20, 20, 20}
+    answer = []float64 {math.NaN(), 0, 0, 0, 0, 0, 0}
+    stand := float64(0)
+    for i, e := range(data) {
+        stand = std(stand ,e)
+        if i == 0 && !math.IsNaN(stand) {
+            t.Error("stand derivation single value fial")
+        } 
+        
+        if i > 0 {
+            if stand != answer[i] {
+                fmt.Println(i)
+                fmt.Println(stand)
+                fmt.Println(answer[i])
+                t.Error("stand derivation fial")
+            }
+        }
+
+
+    }
 
 }

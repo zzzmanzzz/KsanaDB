@@ -1,4 +1,7 @@
 package KsanaDB  
+import(
+    "math"
+)
 
 type aggFunc func(float64, float64, ...interface{}) float64
 
@@ -33,6 +36,23 @@ var fnRegistry = map[string] interface{} {
                   return sum/float64(i)
               }
          },
+    "std": func() func(dummy float64, val float64, others ...interface{}) float64 {
+            i := 0
+            mean := float64(0)
+            m2 := float64(0)
+
+            // Welford's algorithm
+            return func(dummy float64, val float64, others ...interface{}) float64 { 
+                i = i + 1
+                delta := val - mean
+                mean = mean + delta / float64(i)
+                m2 = m2 + delta * (val - mean)
+                if i < 2 {
+                    return math.NaN()    
+                } 
+                return math.Sqrt(m2/float64((i-1)))
+            }
+         },
 }
 
 func getFuncMap(funName string) func(float64, float64, ...interface{}) float64 {
@@ -48,6 +68,9 @@ func getFuncMap(funName string) func(float64, float64, ...interface{}) float64 {
             aggf = fnRegistry["count"].(func(float64, float64, ...interface{}) float64)
         case "avg":
             f := fnRegistry["avg"].(func() func(float64, float64, ...interface{}) float64)
+            aggf = f()
+        case "std":
+            f := fnRegistry["std"].(func() func(float64, float64, ...interface{}) float64)
             aggf = f()
     }
     return aggf
