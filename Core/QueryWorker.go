@@ -28,7 +28,8 @@ func concurrentPart(key string, startTimestamp int64, timeRange int64, aggregate
     ret := map[string][]map[string]interface{}{}
     localResult := []map[string]interface{}{}
 
-    aF := getFuncMap(aggregateFunction)
+    //aF := getFuncMap(aggregateFunction)
+    aggFun := aggreatorFactory(aggregateFunction) 
 
     for {
         d, more := <-in
@@ -38,7 +39,7 @@ func concurrentPart(key string, startTimestamp int64, timeRange int64, aggregate
         tc := d["timestamp"].(int64)
         vc := d["value"].(float64)
 
-        rangeStartTime, rangeEndTime, aggResult, localResult = rangeAggreator(rangeStartTime, rangeEndTime, aggResult, tc, vc, aF, startTimestamp, timeRange, localResult)
+        rangeStartTime, rangeEndTime, aggResult, localResult = aggFun(rangeStartTime, rangeEndTime, aggResult, tc, vc, startTimestamp, timeRange, localResult)
     }
     if len(localResult) > 0 {
          ret[key] = localResult
@@ -126,7 +127,8 @@ func nonConcurrentQuery(dataList []string, startTimestamp int64, tagFilter []str
     rangeStartTime := int64(0)
     rangeEndTime := int64(0)
 
-    aF := getFuncMap(aggregateFunction)
+    //aF := getFuncMap(aggregateFunction)
+    aggfun := aggreatorFactory(aggregateFunction) 
 
     hasTagFilter := len(tagFilter) > 0
 
@@ -141,31 +143,55 @@ func nonConcurrentQuery(dataList []string, startTimestamp int64, tagFilter []str
         if hasTagFilter && filter(tagFilter, tags) == false {
             continue
         }
-        rangeStartTime, rangeEndTime, aggResult, ret = rangeAggreator(rangeStartTime, rangeEndTime, aggResult, tc, vc, aF, startTimestamp, timeRange, ret)
+        rangeStartTime, rangeEndTime, aggResult, ret = aggfun(rangeStartTime, rangeEndTime, aggResult, tc, vc, startTimestamp, timeRange, ret)
     } 
 
     result["single"] = ret
     return result, nil
 }
 
-func rangeAggreator(rangeStartTime int64, rangeEndTime int64, aggResult float64, currentElementTime int64, currentElementValue float64, aF aggFunc, startTimestamp int64, timeRange int64, ret []map[string]interface{}) (int64, int64, float64, []map[string]interface{}){
-        
-        if rangeStartTime == 0 {
-            rangeStartTime = currentElementTime - ( currentElementTime - startTimestamp ) % timeRange
-            rangeEndTime = rangeStartTime + timeRange
-        } 
- 
-        if currentElementTime > rangeEndTime {
-            ele := make(map[string]interface{})
+func aggreatorFactory(aggFunction string) func(rangeStartTime int64, rangeEndTime int64, aggResult float64, currentElementTime int64, currentElementValue float64, startTimestamp int64, timeRange int64, ret []map[string]interface{}) (int64, int64, float64, []map[string]interface{}) {
 
-            ele["timestamp"] = rangeStartTime
-            ele["value"] = aggResult
-            ret = append(ret, ele) 
-            rangeStartTime = currentElementTime - ( currentElementTime - startTimestamp ) % timeRange
-            rangeEndTime = rangeStartTime + timeRange
-            aggResult = aF(0,currentElementValue) 
-        } else {
-            aggResult = aF(aggResult, currentElementValue)
-        }
-        return rangeStartTime, rangeEndTime, aggResult, ret
+    aF := getFuncMap(aggFunction)
+   var aggreator func (rangeStartTime int64, rangeEndTime int64, aggResult float64, currentElementTime int64, currentElementValue float64, startTimestamp int64, timeRange int64, ret []map[string]interface{}) (int64, int64, float64, []map[string]interface{})
+
+   switch aggFunction {
+       case "count", "min", "max", "sum", "avg", "std" :
+           aggreator = func (rangeStartTime int64, rangeEndTime int64, aggResult float64, currentElementTime int64, currentElementValue float64, startTimestamp int64, timeRange int64, ret []map[string]interface{}) (int64, int64, float64, []map[string]interface{}) {
+        
+               if rangeStartTime == 0 {
+                   rangeStartTime = currentElementTime - ( currentElementTime - startTimestamp ) % timeRange
+                   rangeEndTime = rangeStartTime + timeRange
+               } 
+ 
+               if currentElementTime > rangeEndTime {
+                   ele := make(map[string]interface{})
+                   ele["timestamp"] = rangeStartTime
+                   ele["value"] = aggResult
+                   ret = append(ret, ele) 
+                   rangeStartTime = currentElementTime - ( currentElementTime - startTimestamp ) % timeRange
+                   rangeEndTime = rangeStartTime + timeRange
+                   aggResult = aF(0,currentElementValue) 
+                   aF = getFuncMap(aggFunction)
+               } else {
+                   aggResult = aF(aggResult, currentElementValue)
+               }
+               return rangeStartTime, rangeEndTime, aggResult, ret
+           }
+   
+       case "raw":
+           aggreator = func (rangeStartTime int64, rangeEndTime int64, aggResult float64, currentElementTime int64, currentElementValue float64, startTimestamp int64, timeRange int64, ret []map[string]interface{}) (int64, int64, float64, []map[string]interface{}) {
+               aggResult = aF(0,currentElementValue) 
+               ele := make(map[string]interface{})
+               ele["timestamp"] = currentElementTime
+               ele["value"] = aggResult
+               ret = append(ret, ele) 
+               aF = getFuncMap(aggFunction)
+               return rangeStartTime, rangeEndTime, aggResult, ret
+           }
+  
+   }
+   return aggreator
+
 }
+
