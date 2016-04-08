@@ -210,6 +210,10 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
 
     data, err := queryWorker(rawData, start, tagFilterSeq, groupBy, aggreationFunction, unit, timeRange)
 
+    if err != nil {
+        return "{}", err    
+    }
+
     ret, err := generateOutputData(data, reverseHash, name, start, stop, tagFilter, groupByTag, aggreationFunction, timeRange, unit)
 
     fmt.Print("Find record(s): ") 

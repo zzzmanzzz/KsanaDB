@@ -1,6 +1,7 @@
 package KsanaDB  
 import(
     "math"
+    "errors"
 )
 
 type aggFunc func(float64, float64, ...interface{}) float64
@@ -81,14 +82,17 @@ func getFuncMap(funName string) func(float64, float64, ...interface{}) float64 {
     return aggf
 }
 
-func isTimeRangeFunction(f string) bool {
-    ret := false    
+func isTimeRangeFunction(f string) (bool, error) {
+    ret := false
+    var err error
     switch f {
         case "sum", "max", "min", "count", "avg", "std":
             ret = true
         case "raw":
             ret = false
+        default:
+            err = errors.New("no such aggreate function")
     }
-    return ret
+    return ret, err
 }
 

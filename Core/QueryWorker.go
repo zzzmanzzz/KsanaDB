@@ -47,7 +47,13 @@ func concurrentQuery(dataList []string, startTimestamp int64, tagFilter []string
     end := len(dataList)  
 
     var timeRange int64
-    if isTimeRangeFunction(aggregateFunction) {
+    isTRFunction, err := isTimeRangeFunction(aggregateFunction)
+
+    if err != nil {
+        return nil, err    
+    }
+
+    if isTRFunction == true {
         var err error
         timeRange, err = getTimeRange(startTimestamp, sampleRange, sampleUnit )
             if err != nil {
@@ -116,7 +122,13 @@ func nonConcurrentQuery(dataList []string, startTimestamp int64, tagFilter []str
     end := len(dataList)  
 
     var timeRange int64
-    if isTimeRangeFunction(aggregateFunction) {
+    isTRFunction, err := isTimeRangeFunction(aggregateFunction)
+
+    if err != nil {
+        return nil, err    
+    }
+
+    if isTRFunction == true {
         var err error
         timeRange, err = getTimeRange(startTimestamp, sampleRange, sampleUnit )
             if err != nil {

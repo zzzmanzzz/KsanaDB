@@ -81,16 +81,32 @@ func Test_isTimeRangeFunction(t *testing.T) {
     rangeFunction := []string {"sum", "max", "min", "count", "avg", "std"}
     nonRangeFunction := []string{"raw"}
     for _,d := range(rangeFunction) {
-        if isTimeRangeFunction(d)  == false  {
+        ret, err := isTimeRangeFunction(d)
+        if ret == false  {
              fmt.Println(d)
              t.Error("isTimeRangeFunction fail")    
+        }
+        if err != nil {
+             fmt.Println(d)
+             t.Error(err)    
         }
     }
 
     for _,d := range(nonRangeFunction) {
-        if isTimeRangeFunction(d)  == true  {
+        ret, err := isTimeRangeFunction(d) 
+        if ret  == true  {
              fmt.Println(d)
              t.Error("isTimeRangeFunction fail")    
         }
+        if err != nil {
+             fmt.Println(d)
+             t.Error(err)    
+        }
     }
+   
+    _, err := isTimeRangeFunction("noSuchFunction")
+    if err == nil {
+         t.Error("Not detect non-exist function")    
+    }
+
 }
