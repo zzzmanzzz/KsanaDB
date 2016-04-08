@@ -9,6 +9,13 @@ func queryWorker(dataList []string, startTimestamp int64, tagFilter []string, gr
     var ret map[string][]map[string]interface{}
     hasGroupBy := len(groupByTag) > 0
     var err error
+    
+     _, err = isTimeRangeFunction(aggregateFunction)
+
+    if err != nil {
+        return nil, err    
+    }
+
     if hasGroupBy == false {
         ret, err = nonConcurrentQuery(dataList, startTimestamp, tagFilter, aggregateFunction, sampleUnit, sampleRange)
     } else {
@@ -47,11 +54,8 @@ func concurrentQuery(dataList []string, startTimestamp int64, tagFilter []string
     end := len(dataList)  
 
     var timeRange int64
-    isTRFunction, err := isTimeRangeFunction(aggregateFunction)
 
-    if err != nil {
-        return nil, err    
-    }
+    isTRFunction, _ := isTimeRangeFunction(aggregateFunction)
 
     if isTRFunction == true {
         var err error
@@ -122,11 +126,7 @@ func nonConcurrentQuery(dataList []string, startTimestamp int64, tagFilter []str
     end := len(dataList)  
 
     var timeRange int64
-    isTRFunction, err := isTimeRangeFunction(aggregateFunction)
-
-    if err != nil {
-        return nil, err    
-    }
+    isTRFunction, _ := isTimeRangeFunction(aggregateFunction)
 
     if isTRFunction == true {
         var err error
@@ -167,8 +167,9 @@ func aggreatorFactory(aggFunction string) func(rangeStartTime int64, rangeEndTim
     aF := getFuncMap(aggFunction)
    var aggreator func (rangeStartTime int64, rangeEndTime int64, aggResult float64, currentElementTime int64, currentElementValue float64, startTimestamp int64, timeRange int64, ret []map[string]interface{}) (int64, int64, float64, []map[string]interface{})
 
-   switch aggFunction {
-       case "count", "min", "max", "sum", "avg", "std" :
+
+    isTRFunction, _ := isTimeRangeFunction(aggFunction) 
+    if isTRFunction == true {
            aggreator = func (rangeStartTime int64, rangeEndTime int64, aggResult float64, currentElementTime int64, currentElementValue float64, startTimestamp int64, timeRange int64, ret []map[string]interface{}) (int64, int64, float64, []map[string]interface{}) {
         
                if rangeStartTime == 0 {
@@ -191,7 +192,7 @@ func aggreatorFactory(aggFunction string) func(rangeStartTime int64, rangeEndTim
                return rangeStartTime, rangeEndTime, aggResult, ret
            }
    
-       case "raw":
+       } else {
            aggreator = func (rangeStartTime int64, rangeEndTime int64, aggResult float64, currentElementTime int64, currentElementValue float64, startTimestamp int64, timeRange int64, ret []map[string]interface{}) (int64, int64, float64, []map[string]interface{}) {
                aggResult = aF(0,currentElementValue) 
                ele := make(map[string]interface{})
@@ -201,8 +202,7 @@ func aggreatorFactory(aggFunction string) func(rangeStartTime int64, rangeEndTim
                aF = getFuncMap(aggFunction)
                return rangeStartTime, rangeEndTime, aggResult, ret
            }
-  
-   }
+       }
    return aggreator
 
 }
