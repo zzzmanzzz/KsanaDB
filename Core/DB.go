@@ -150,7 +150,7 @@ func QueryData(q *Query) (string , error) {
         tagFilter = append(tagFilter, fmt.Sprintf("%s\t%s", k,v))    
     }
     groupByTag := q.Metric.GroupBy
-    aggreationFunction := q.Metric.Aggregator.Name
+    aggregationFunction := q.Metric.Aggregator.Name
 
     var unit string
     if q.Metric.Aggregator.Sampling.Unit != nil {
@@ -165,14 +165,21 @@ func QueryData(q *Query) (string , error) {
             }
     }
 
-    ret, err :=  QueryTimeSeriesData(*q.Metric.Name, start, end, tagFilter, groupByTag, aggreationFunction, int(timeRange), unit)
+    ret, err :=  QueryTimeSeriesData(*q.Metric.Name, start, end, tagFilter, groupByTag, aggregationFunction, int(timeRange), unit)
     return ret, err
 }
 
-func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []string, groupByTag []string, aggreationFunction string, timeRange int, unit string) (string , error) {
+func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []string, groupByTag []string, aggregationFunction string, timeRange int, unit string) (string , error) {
     
     groupBy := map[string][]string{}
     var reverseHash map[string]string
+
+    _, err := isTimeRangeFunction(aggregationFunction)
+
+    if err != nil {
+        return "{}", err    
+    }
+
 
     if len(groupByTag) > 0 {
         for _,t := range groupByTag {
@@ -197,6 +204,7 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
         }
     }
 
+
     rawData, err := queryTimeSeries(prefix , name , start , stop )
 
     if err != nil {
@@ -208,13 +216,13 @@ func QueryTimeSeriesData(name string, start int64, stop int64, tagFilter []strin
     }
 
 
-    data, err := queryWorker(rawData, start, tagFilterSeq, groupBy, aggreationFunction, unit, timeRange)
+    data, err := queryWorker(rawData, start, tagFilterSeq, groupBy, aggregationFunction, unit, timeRange)
 
     if err != nil {
         return "{}", err    
     }
 
-    ret, err := generateOutputData(data, reverseHash, name, start, stop, tagFilter, groupByTag, aggreationFunction, timeRange, unit)
+    ret, err := generateOutputData(data, reverseHash, name, start, stop, tagFilter, groupByTag, aggregationFunction, timeRange, unit)
 
     fmt.Print("Find record(s): ") 
     fmt.Println(len(rawData)) 

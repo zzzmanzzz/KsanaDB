@@ -10,12 +10,6 @@ func queryWorker(dataList []string, startTimestamp int64, tagFilter []string, gr
     hasGroupBy := len(groupByTag) > 0
     var err error
     
-     _, err = isTimeRangeFunction(aggregateFunction)
-
-    if err != nil {
-        return nil, err    
-    }
-
     if hasGroupBy == false {
         ret, err = nonConcurrentQuery(dataList, startTimestamp, tagFilter, aggregateFunction, sampleUnit, sampleRange)
     } else {
