@@ -68,8 +68,13 @@ func SetData(data string) *error {
                 timestamp, errT := data[0].Int64()
                 value, errV := data[1].Float64()
 
-                if errT != nil || errV != nil {
-                    log.Println(err.Error())
+                if errT != nil {
+                    log.Println(errT.Error())
+                    continue    
+                }
+
+                if errV != nil {
+                    log.Println(errV.Error())
                     continue    
                 }
 

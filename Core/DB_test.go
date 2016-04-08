@@ -2,7 +2,6 @@ package KsanaDB
 import(
         "encoding/json"
         "testing" 
-        "fmt"
 )
 
 func init() { 
@@ -24,6 +23,33 @@ func Test_SetDataPoints(t *testing.T) {
 
     if err != nil {
         t.Error(err)    
+    }
+}
+
+func Test_SetSingleDataNameEmpty(t *testing.T) {  
+    data := `[{"name": "", "timestamp": 1234567890, "value": 1.2, "tags": {"host": "server1", "speed":"55", "type":"tp0"}}]`
+    err := SetData(data)
+
+    if err != nil {
+        t.Error(err)    
+    }
+}
+
+func Test_SetDataPointsTimestampFail(t *testing.T) {  
+    data := `[{"name":"wyatt_new","tags":{"host":"server1","speed":"10","type":"tp2"},"datapoints":[["ZZZ",0],[1458791287001,1],[1458791287002,2]]},{"name":"wyatt_new","tags":{"host":"server11","speed":"11","type":"tp1"},"datapoints":[[1458791287003,0],[1458791287103,1],[1458791287203,2]]}]`
+    err := SetData(data)
+
+    if err != nil {
+        t.Error(err)    
+    }
+}
+
+func Test_SetDataPointsJsonFial(t *testing.T) { 
+    data := `[{"name":"wyatt_new","tags":{"host":"server1","speed":"10","type":"tp2"},"datapoints":[[xx1458791287000,0],[1458791287001,1],[1458791287002,2]]},{"name":"wyatt_new","tags":{"host":"server11","speed":"11","type":"tp1"},"datapoints":[[1458791287003,0],[1458791287103,1],[1458791287203,2]]}]`
+    err := SetData(data) 
+
+    if err == nil {
+        t.Error("SetDataPointsJsonFial fial")    
     }
 }
 
@@ -50,13 +76,27 @@ func Test_QueryReturnNothing(t *testing.T) {
     if err != nil {
         t.Error(err)    
     }
-    result, err := QueryData(q)
+    _, err = QueryData(q)
 
     if err != nil {
         t.Error(err)    
     }
+}
 
-    fmt.Println(result)
+func Test_QueryStartTimeFail(t *testing.T) {  
+    maxPipeline = 8000
+    data := `{"endabsolute":1389096010500,"metric":{"aggregator":{"name":"sum","sampling":{"unit":"h","value":1}},"tags":null,"name":"wyatt_test"}}`
+
+    q, err := ParseQueryJson(data)
+    if err != nil {
+        t.Error(err)    
+    }
+    _, err = QueryData(q)
+
+    if err == nil {
+        t.Error("Not detect start time not input")    
+    }
+
 }
 
 func Test_GetMetricsTag(t *testing.T) {
