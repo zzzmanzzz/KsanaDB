@@ -99,6 +99,21 @@ func Test_QueryStartTimeFail(t *testing.T) {
 
 }
 
+func Test_QueryEndTimeFail(t *testing.T) {  
+    maxPipeline = 8000
+    data := `{"startabsolute":1389024000000,"metric":{"aggregator":{"name":"sum","sampling":{"unit":"h","value":1}},"tags":null,"name":"wyatt_test"}}`
+
+    q, err := ParseQueryJson(data)
+    if err != nil {
+        t.Error(err)    
+    }
+    _, err = QueryData(q)
+
+    if err == nil {
+        t.Error("Not detect end time not input")    
+    }
+}
+
 func Test_GetMetricsTag(t *testing.T) {
     name := "wyatt_test"
     target := "All"

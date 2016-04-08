@@ -289,6 +289,35 @@ func Test_getQueryTimeBefore1d(t *testing.T) {
     }
 }
 
+func Test_getQueryTimeUnitFail(t *testing.T) {
+    tNow := time.Now()
+    var unit string
+    value := json.Number("1")
+    _, err := getQueryTime(tNow, &unit, &value)
+
+    if err == nil {
+        t.Error("Not detect query time unit fail")
+    }
+    
+    unit = "WRONG"
+    _, err = getQueryTime(tNow, &unit, &value)
+
+    if err == nil {
+        t.Error("Not detect query time unit data fail")
+    }
+}
+
+func Test_getQueryTimeValueFail(t *testing.T) {
+    tNow := time.Now()
+    unit := "h"
+    var value json.Number
+    _, err := getQueryTime(tNow, &unit, &value)
+
+    if err == nil {
+        t.Error("Not detect query time value fail")
+    }
+}
+
 func Test_generateTimeSeriesData(t *testing.T) {
 
   keyname, offset :=generateTimeSeriesData("PREFIX\t", "test", 1458527539)
