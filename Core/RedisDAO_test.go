@@ -57,3 +57,7 @@ func Test_deleteKeys(t *testing.T) {
 func Test_close(t *testing.T) {
     Close()
 }
+
+func Test_getClient(t *testing.T) {
+    getClient()
+}
