@@ -12,7 +12,7 @@ var fnRegistry = map[string] interface{} {
              return sum + val
          },
     "max": func() func(dummy float64, val float64, others ...interface{}) float64 { 
-            max := math.SmallestNonzeroFloat64
+            max := (-1)*math.MaxFloat64
             return func(dummy float64, val float64, others ...interface{}) float64 {
                 if max < val { 
                    max = val

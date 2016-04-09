@@ -24,11 +24,17 @@ func Test_getFuncMap(t *testing.T) {
         t.Error("max fial")    
     }
 
-    //reset max
+    //reset max and test negative data
     max = getFuncMap("max")
-    maxRet = max(100,700) //100 is dummy
-    if maxRet != 700 {
-        t.Error("max reset fial")    
+    maxRet = max(100,-700) //100 is dummy
+    if maxRet != -700 {
+        fmt.Println(maxRet)
+        t.Error("max negative fial")    
+    }
+    maxRet = max(100,-1100) //100 is dummy
+    if maxRet != -700 {
+        fmt.Println(maxRet)
+        t.Error("max negative fial")    
     }
 
     min := getFuncMap("min")
