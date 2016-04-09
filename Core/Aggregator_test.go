@@ -13,33 +13,56 @@ func Test_getFuncMap(t *testing.T) {
     }
 
     max := getFuncMap("max")
-    maxRet := max(100,200)
+    maxRet := max(100,200) //100 is dummy
     if maxRet != 200 {
+        fmt.Println(maxRet)
+        t.Error("max fial")    
+    }
+    maxRet = max(100,2000) //100 is dummy
+    if maxRet != 2000 {
+        fmt.Println(maxRet)
         t.Error("max fial")    
     }
 
+    //reset max
     max = getFuncMap("max")
-    maxRet = max(200,100)
-    if maxRet != 200 {
-        t.Error("max fial")    
+    maxRet = max(100,700) //100 is dummy
+    if maxRet != 700 {
+        t.Error("max reset fial")    
     }
 
     min := getFuncMap("min")
-    minRet := min(100,200)
-    if minRet != 100 {
+    minRet := min(100,200) //100 is dummy
+    if minRet != 200 {
+        fmt.Println(minRet)
         t.Error("min fial")    
     }
-
+    minRet = min(100,50) // 100 is dummy
+    if minRet != 50 {
+        fmt.Println(minRet)
+        t.Error("min fial")    
+    }
+   
+    //reset test
     min = getFuncMap("min")
     minRet = min(200,100)
     if minRet != 100 {
-        t.Error("min fial")    
+        fmt.Println(minRet)
+        t.Error("min reset fial")    
     }
 
     count := getFuncMap("count")
     countRet := count(0,100)
     if countRet != 1 {
         t.Error("count fial")    
+    }
+
+    firstF := getFuncMap("first")
+    firstRet := firstF(100,200) // 100 is dummy
+    firstRet = firstF(100,700)
+    if firstRet != 200 {
+        fmt.Println(firstRet)
+        t.Error("first fial")    
     }
 
     avg := getFuncMap("avg")

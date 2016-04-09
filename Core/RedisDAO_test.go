@@ -53,3 +53,7 @@ func Test_deleteKeys(t *testing.T) {
         }
     deleteKeys(data)    
 }
+
+func Test_close(t *testing.T) {
+    Close()
+}

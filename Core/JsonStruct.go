@@ -51,7 +51,7 @@ type AllTagSeqType struct {
 
 
 type GroupType struct {
-    Tags map[string]string    
+    Tags map[string]string  `json:"Tags,omitempty"` 
     Values [][] interface{}
 }
 
