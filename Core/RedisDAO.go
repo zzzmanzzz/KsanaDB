@@ -20,18 +20,18 @@ var clientFunction = getClient
 
 func InitRedis(network, address string)  {
     maxPipeline = 8000 // too many  pipeline will get fewer data
-    pool = &redis.Pool{                                                                                                    
+    pool = &redis.Pool{
         MaxIdle:     80,
         MaxActive: 12000,
         IdleTimeout: 240 * time.Second,                          
-        Dial: func() (redis.Conn, error) {                                                                        
-            c, err := redis.Dial(network, address)                                                                   
+        Dial: func() (redis.Conn, error) {
+            c, err := redis.Dial(network, address) 
                 if err != nil { 
                     log.Fatalf(err.Error())
-                    return nil, err                                                                               
-                }                                                                                                 
-                return c, err                                                                                         
-        },                                                                                                        
+                    return nil, err
+                }
+                return c, err
+        },    
         TestOnBorrow: func(c redis.Conn, t time.Time) error { 
                   _, err := c.Do("PING") 
                   if err != nil { 
@@ -39,7 +39,7 @@ func InitRedis(network, address string)  {
                       return err 
                   }
                   return nil 
-        },                                                                                                           
+        }, 
     } 
 }  
 
@@ -68,7 +68,6 @@ func queryTimeSeries(prefix string, name string, start int64, stop int64) ([]str
     }
 
     for _, cmd := range cmds {
-
         client.Send("ZRANGEBYSCORE", redis.Args{cmd["keyName"], cmd["from"], cmd["to"]}...)
     }
     client.Flush()
@@ -85,6 +84,12 @@ func queryTimeSeries(prefix string, name string, start int64, stop int64) ([]str
     return ret, nil
 }
 
+func setGeoData(prefix string, metrics string, tagName string, longitude float64, latitude float64) (int, error){
+    client := clientFunction()
+    defer client.Close()
+    hashName := prefix + metrics + "\tGeoHash"
+    return redis.Int(client.Do("GEOADD", redis.Args{hashName, longitude, latitude, tagName}...))
+}
 
 func setTags(prefix string, metrics string, tags []string) (string) {
     //TODO: call function

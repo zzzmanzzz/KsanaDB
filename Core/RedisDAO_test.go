@@ -61,3 +61,13 @@ func Test_close(t *testing.T) {
 func Test_getClient(t *testing.T) {
     getClient()
 }
+
+
+func Test_addGeoTag(t *testing.T) {
+    prefix = "KSANADBv1\t"
+    metrics := "test"
+    tagName := "sensor1"
+    longitude := float64(121.5560405)
+    latitude := float64(24.9997971)
+    setGeoData(prefix, metrics, tagName, longitude, latitude)
+}
