@@ -3,12 +3,18 @@ import (
     "encoding/json"
 )
 
+type GeoData struct {
+    Name string
+    Longitude json.Number
+    Latitude json.Number
+}
 
 type DataPoint struct {
     Name string
     Value *json.Number
     Tags  map[string]interface{}
     Timestamp *json.Number
+    Location *GeoData `json:"Location,omitempty"` 
     Datapoints [][]json.Number
 }
 
