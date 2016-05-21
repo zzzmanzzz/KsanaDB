@@ -47,6 +47,10 @@ func SetData(data string) *error {
                 continue
             }
 
+            geoData := getGeoData(hashdata.Location)
+  
+            //TODO : assign geodata name to GeoTag
+            geoData = geoData
 
             element := make( map[string]interface{})
             keyname, offset := generateTimeSeriesData(prefix, name , timestamp)

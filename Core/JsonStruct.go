@@ -5,8 +5,8 @@ import (
 
 type GeoData struct {
     Name string
-    Longitude json.Number
-    Latitude json.Number
+    Longitude float64
+    Latitude float64
 }
 
 type DataPoint struct {

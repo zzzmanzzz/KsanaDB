@@ -328,3 +328,16 @@ func Test_generateTimeSeriesData(t *testing.T) {
       t.Error("offset err")
   }
 }
+
+func Test_getGeoData(t *testing.T) {
+    var g = GeoData{ 
+        Name: "sensor1",
+        Longitude: 121.5560405,
+        Latitude: 24.9997971,
+    }
+
+    ret := getGeoData(&g)
+    if ret == nil {
+      t.Error("getGeoData err")
+    } 
+}

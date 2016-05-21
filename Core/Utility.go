@@ -136,3 +136,13 @@ func getQueryTime(tNow time.Time, unit *string, value *json.Number) (int64, erro
     }
     return absTime, nil
 }
+
+func getGeoData(d *GeoData) (*GeoData) {
+
+     if checkGeoData(d) == false {
+         return nil
+     }
+
+     d.Name = removeTab(d.Name)
+     return d
+}

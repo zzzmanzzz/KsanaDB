@@ -10,3 +10,13 @@ func isMetricNameValidate(metric string) bool {
 func removeTab(tag string) string {
     return strings.Replace(tag, "\t", "", -1)
 }
+
+func checkGeoData(d *GeoData) bool {
+     if d == nil {
+         return false
+     }
+     if d.Name == "" {
+         return false
+     }
+     return true 
+}
